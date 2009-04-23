@@ -5,7 +5,7 @@
 #include <cctype>
 //#include <GLUT/glut.h> on Mac
 #include "project3.h"
-// checking if its working
+// checking if its working 
 
 int main(int argc, char** argv)
 {
