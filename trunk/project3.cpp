@@ -193,6 +193,10 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
     case 'F':
          checkFullscreen();
          break;
+         case 'C':
+              glutSetWindow(helpWindow);
+              glutHideWindow();
+              break;
     default:
 		  glutPostRedisplay();
 	}
