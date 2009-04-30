@@ -74,7 +74,7 @@ void myDisplay(void)
 	glVertex3f(0.0,1.0,0.0);
 	
 	glEnd();
-    
+    startScreen();
   glutSwapBuffers();
   glutPostRedisplay();
 }
@@ -87,10 +87,18 @@ void helpDisplay(void)
   glClearColor(0.0, 0.0, 0.0, 0.0); //Set bkgrnd-color
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   glColor3f(1.0, 1, 1); // Set lettercolor white
-  glRasterPos2f(-2, 4.5);bigText("HELP MENU");
-  glRasterPos2f(-4, 3);bigText("I  for Instructions");
-  glRasterPos2f(-4, 0);bigText("F  to Fullscreen");
-  glRasterPos2f(-4, -1.5);bigText("Q  to Quit");
+  
+  glRasterPos2f(-2, 4.5);
+  bigText("HELP MENU");
+  
+  glRasterPos2f(-4, 3);
+  bigText("I  for Instructions");
+  
+  glRasterPos2f(-4, 0);
+  bigText("F  to Fullscreen");
+  
+  glRasterPos2f(-4, -1.5);
+  bigText("Q  to Quit");
 
   glutSwapBuffers();
   glutPostRedisplay();
@@ -245,4 +253,9 @@ void pinBackgroundTexture(void)
 	glEnd();  // done with the texture map
 	glDisable(GL_TEXTURE_2D); //We don't want to map onto the sphere 
   //////////////////////////////////////////////////////////////////////
+}
+void startScreen(){
+     if(intro){
+               
+               }
 }

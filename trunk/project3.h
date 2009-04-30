@@ -7,7 +7,7 @@ GLuint myTexture;  //the texture variable
 GLUquadricObj *quadricObj = gluNewQuadric(); 
 
 bool fullscreen=0;
-
+bool intro = 1;
 void myDisplay(void);
 void helpDisplay(void);
 void myReshape(int w, int h);
@@ -17,5 +17,6 @@ void checkFullscreen(void);
 void bigText(char *s);
 void pinBackgroundTexture(void);
 void myInit(void);
+void startScreen(void);
 
 #endif
