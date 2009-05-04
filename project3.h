@@ -14,6 +14,10 @@ float f_x, f_y, f_z = 0;
 float f_accel_x, f_accel_y, f_accel_z = 0;
 float f_vel_x, f_vel_y, f_vel_z = 0.0 ;
 float f_roll, f_vert = 0;
+int up = 'W';
+int down = 'S';
+int left = 'A';
+int right = 'D';
 
 void myDisplay(void);
 void helpDisplay(void);
@@ -29,6 +33,6 @@ void pinIntro(void);
 void myTime(int time);
 void figureFighter(void);
 void loadImages(void);
-
+void mainKeyUp(unsigned char key, int pointx, int pointy);
 
 #endif

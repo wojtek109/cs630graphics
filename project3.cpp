@@ -15,7 +15,9 @@ int main(int argc, char** argv)
    glutInitWindowPosition (50, 50);
    mainWindow = glutCreateWindow ("Project 3a"); //use string for title 
    glutDisplayFunc(myDisplay); 
+   glutIgnoreKeyRepeat(1);
    glutKeyboardFunc(myKeyboard);
+   glutKeyboardUpFunc(mainKeyUp);
    glutReshapeFunc(myReshape);
 
    main_menu=glutCreateMenu(myMenu);
@@ -59,6 +61,33 @@ int main(int argc, char** argv)
    glutMainLoop();
    return 0;
 }
+void mainKeyUp(unsigned char key, int pointx, int pointy){
+     key = toupper(key);
+     if(key == up)
+     f_vel_y = 0.0f;
+     else if(key == down)
+     f_vel_y = 0.0f;
+     else if(key == left)
+     f_vel_x = 0.0f;
+     else if(key == right)
+     f_vel_x = 0.0f;
+//     switch(key){
+//      case 'W':
+//           f_vel_y = 0.0f;
+//           break;
+//      case 'S':
+//           f_vel_y = 0.0f;
+//           break;
+//      case 'A':
+//           f_vel_x = 0.0f;
+//           break;
+//      case 'D':
+//           f_vel_x = 0.0f;
+//           break;
+//     default:
+//             break;
+//             }
+     }
 //////////////////////////////////////////////////////
 /*Main Window Display*/
 void myDisplay(void)
@@ -339,7 +368,13 @@ void myTime(int time){
       //min,max x= -3, 3
       //min,max y = -3, 3
 //      f_vel_x += f_accel_x;
-//      f_vel_y += f_accel_y;
+//      f_vel_y += f_accel_y; 
+//      if(-.05 <= f_vel_x <= 0.05)
+//      f_vel_x = 0;
+//      else{}
+      
+                   
+                  
 
       f_x += f_vel_x;
       f_y += f_vel_y;
@@ -360,8 +395,5 @@ void myTime(int time){
                  f_y=-3;
                  f_vel_y=0;
                  }
-      f_vel_x = 0.0f;
-      f_vel_y = 0.0f;
-//      f_accel_y = 0.0f;
-//      f_accel_x = 0.0f;
+                 
       }
