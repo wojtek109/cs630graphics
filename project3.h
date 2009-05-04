@@ -40,7 +40,7 @@ int introAlpha = 100;
 */
 float f_x, f_y, f_z = 0;
 float f_vel_x, f_vel_y, f_vel_z = 0.0 ;
-float f_roll, f_vert = 0;
+float f_roll, f_pitch = 0;
 
 /*
 * The following lines included to complement re-mapping of keys
