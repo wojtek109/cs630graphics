@@ -122,14 +122,22 @@ int main(int argc, char** argv)
 void mainKeyUp(unsigned char key, int pointx, int pointy){
      //check for which key is up, and reset its velocity
      key = toupper(key);
-     if(key == up)
+     if(key == up){
      f_vel_y = 0.0f;
-     else if(key == down)
+     f_pitch = 0.0f;
+     }
+     else if(key == down){
      f_vel_y = 0.0f;
-     else if(key == left)
+     f_pitch = 0.0f;
+     }
+     else if(key == left){
      f_vel_x = 0.0f;
-     else if(key == right)
+     f_roll = 0.0f;
+     }
+     else if(key == right){
      f_vel_x = 0.0f;
+     f_roll = 0.0f;
+     }
      }
 
 //////////////////////////////////////////////////////
@@ -154,6 +162,10 @@ void myDisplay(void)
     
     //move the draw points that way!
 	glTranslatef(f_x,f_y,f_z);
+	
+	//and rotate too
+	glRotatef(f_roll,0,0,1);
+	glRotatef(f_pitch,1,0,0);
 	
 	//draw the fighter
 	glBegin(GL_TRIANGLES);
@@ -185,6 +197,8 @@ void myDisplay(void)
 	glEnd();
    	
     //reset the movement
+    glRotatef(-f_pitch,1,0,0);
+    glRotatef(-f_roll,0,0,1);
     glTranslatef(-f_x,-f_y,-f_z);
 	
 	//change the current texture
@@ -294,15 +308,22 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
   key = toupper(key);
   
   //check for keypress (switch doesn't take non-statics)
-  if(key == up)
+  if(key == up){
          f_vel_y = 0.1f;
-    else if(key==down)
+         f_pitch = 10.0f;
+         }
+    else if(key==down){
          f_vel_y = -0.1f;
-    else if(key ==left)
+         f_pitch = -10.0f;
+         }
+    else if(key ==left){
          f_vel_x = -0.1f;
-    else if(key==right)
+         f_roll = 10.0f;
+         }
+    else if(key==right){
          f_vel_x = 0.1f;
-         
+         f_roll = -10.0f;
+         }
   //check statics
 	switch(key)
 	{
@@ -347,7 +368,7 @@ void pinBackgroundTexture(void)
 
 		//Set the bottom left of the image
 		glTexCoord2f(0.0f, 0.0f); //bottom left of the 2D viewport in the window
-		glVertex3f(-50.0f, -70.0f, -12.0f); //bottom left back
+		glVertex3f(-50.0f, -35.0f, 10.0f); //bottom left back
 		//glVertex3f(-19.0f, -19.0f, -35.0f); //bottom left back
 
 		//Set the top left of the image
@@ -362,7 +383,7 @@ void pinBackgroundTexture(void)
 
 		//Set the bottom right of the image
 		glTexCoord2f(1.0f, 0.0f); //bottom right of the 2D viewport in the window
-		glVertex3f( 50.0f, -70.0f, -12.0f); //bottom right back
+		glVertex3f( 50.0f, -35.0f, 10.0f); //bottom right back
 		//glVertex3f( 19.0f, -19.0f, -35.0f); //bottom right back
 
 		//Change the vertex locations where the texture is mapped and see the result
