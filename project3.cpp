@@ -1,66 +1,119 @@
-#include <cstdlib>
-#include <stdlib.h>
-#include <GL/glaux.h>
-#include <GL/glut.h>
-#include <cctype>
-//#include <GLUT/glut.h> on Mac
+//including the 
 #include "project3.h"
-// checking if its working 
 
+/*
+* Main loop.
+* Big fat initialization!
+*/
 int main(int argc, char** argv)
 {
-   glutInit(&argc, argv);
-   glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //avoid flicker
-   glutInitWindowSize (500, 500); 
-   glutInitWindowPosition (50, 50);
-   mainWindow = glutCreateWindow ("Project 3a"); //use string for title 
-   glutDisplayFunc(myDisplay); 
-   glutIgnoreKeyRepeat(1);
-   glutKeyboardFunc(myKeyboard);
-   glutKeyboardUpFunc(mainKeyUp);
-   glutReshapeFunc(myReshape);
-
-   main_menu=glutCreateMenu(myMenu);
-   glutAddMenuEntry("Instructions",1);
-   glutAddMenuEntry("Toggle Fullscreen",2);
-   glutAddMenuEntry("Quit",3);
-   glutAttachMenu(GLUT_RIGHT_BUTTON);
-   
-   // Help Menu Window
-   glutInitWindowSize(320,180);
-   glutInitWindowPosition(600,50);
-   helpWindow = glutCreateWindow("Help Menu");
-   glutDisplayFunc(helpDisplay);
-   glutKeyboardFunc(myKeyboard);
-   glutReshapeFunc(myReshape);
-   glutHideWindow();
-   glutSetWindow(mainWindow);
-
+    //we always call this
+    glutInit(&argc, argv);
+    
+    //double-buffered, rgb color with depth-testing
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
+    
+    //create a 500 x 500 pixel window
+    glutInitWindowSize (500, 500);
+    
+    // and put it @ 50 x 50 from the top-left of the screen 
+    glutInitWindowPosition (50, 50);
+    
+    //actually instansiate the window   
+    mainWindow = glutCreateWindow ("Project 3b");
+    
+    //define a display function for the window
+    glutDisplayFunc(myDisplay); 
+    
+    //ignore key repeats (because it slows things down)
+    glutIgnoreKeyRepeat(1);
+    
+    //define a keyboard handler
+    glutKeyboardFunc(myKeyboard);
+    
+    //and a key-up handler (I found this myself. I'm proud ^^ )
+    glutKeyboardUpFunc(mainKeyUp);
+    
+    //regulate re-shaping of the window
+    glutReshapeFunc(myReshape);
+    
+    //menu creation (with a callback function for selection)   
+    main_menu=glutCreateMenu(myMenu);
+    
+    //adding members to the menu
+    glutAddMenuEntry("Instructions",1);
+    glutAddMenuEntry("Toggle Fullscreen",2);
+    glutAddMenuEntry("Quit",3);
+    
+    //and attaching it to an event (right-mouse click)
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+       
+    // Help window starts here
+    // smaller window (in 16:9 even)
+    glutInitWindowSize(320,180);
+    
+    //put it to the right
+    glutInitWindowPosition(600,50);
+    
+    //actually create it
+    helpWindow = glutCreateWindow("Help Menu");
+    
+    //tell ogl what to display inside
+    glutDisplayFunc(helpDisplay);
+    
+    //define a keyboard handler (maybe it should be different?)
+    glutKeyboardFunc(myKeyboard);
+    
+    //and of course a- hey wait, that's the same reshape! is that safe?
+    glutReshapeFunc(myReshape);
+    
+    //default view:hidden
+    glutHideWindow();
+    
+    //show the main window as default
+    glutSetWindow(mainWindow);
+    
+    //turn on 2-D textures (because we need them)
     glEnable(GL_TEXTURE_2D);
-	gluQuadricTexture(quadricObj, GLU_TRUE);
-	
-	TextureImage[0] = auxDIBImageLoad("galaxy-512x512.bmp"); //load the image file
-	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
-	//	NOTE: BE SURE BACKGROUND IMAGE IS LOCATED IN THE PROJECT DIRECTORY!
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //set the pixel storage mode
-	glGenTextures(1, &myTexture); //generate one texture identified as myTexture
-	glBindTexture(GL_TEXTURE_2D, myTexture); //tells which texture we will be working with.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glutTimerFunc(1000,myTime,1);
-	
-        
-		
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    
+    //some settings about coordinate style
+   	gluQuadricTexture(quadricObj, GLU_TRUE);
+    	
+   	//load the images into memory
+    TextureImage[0] = auxDIBImageLoad("galaxy-512x512.bmp"); //load the image file
+   	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
 
+    //pixel storage mode (drawing options)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-
-   myInit();
-   glutMainLoop();
-   return 0;
+    /*
+    * more texture things.
+    * I'm not sure how all of these others work
+    */
+   	glGenTextures(1, &myTexture); //generate one texture identified as myTexture
+   	glBindTexture(GL_TEXTURE_2D, myTexture); //tells which texture we will be working with.
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   	
+   	//call initial time function (for a delay!)
+    glutTimerFunc(1000,myTime,1);
+    	
+            
+    //texture options (all I know is GL_REPLACE draws over other stuff)		
+   	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    
+    
+    /*
+    * now initialize other things and
+    * process events
+    */
+       myInit();
+       glutMainLoop();
+       return 0;
 }
+
 void mainKeyUp(unsigned char key, int pointx, int pointy){
      key = toupper(key);
      if(key == up)
