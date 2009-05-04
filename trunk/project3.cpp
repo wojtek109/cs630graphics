@@ -104,17 +104,23 @@ int main(int argc, char** argv)
     //texture options (all I know is GL_REPLACE draws over other stuff)		
    	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     
+    //enable z-testing for draw-order
+    glEnable(GL_DEPTH_TEST);
     
-    /*
-    * now initialize other things and
-    * process events
-    */
-       myInit();
-       glutMainLoop();
+    //set bg-color
+	glClearColor(0,0,0,0);
+    
+    //and process events   
+    glutMainLoop();
        return 0;
 }
 
+/*
+* key-up handler. I couldn't handle velocity changes very well without
+* the very useful glutKeyUpFunc
+*/
 void mainKeyUp(unsigned char key, int pointx, int pointy){
+     //check for which key is up, and reset its velocity
      key = toupper(key);
      if(key == up)
      f_vel_y = 0.0f;
@@ -124,37 +130,32 @@ void mainKeyUp(unsigned char key, int pointx, int pointy){
      f_vel_x = 0.0f;
      else if(key == right)
      f_vel_x = 0.0f;
-//     switch(key){
-//      case 'W':
-//           f_vel_y = 0.0f;
-//           break;
-//      case 'S':
-//           f_vel_y = 0.0f;
-//           break;
-//      case 'A':
-//           f_vel_x = 0.0f;
-//           break;
-//      case 'D':
-//           f_vel_x = 0.0f;
-//           break;
-//     default:
-//             break;
-//             }
      }
+
 //////////////////////////////////////////////////////
 /*Main Window Display*/
 void myDisplay(void)
-{
-
-     
-     
-	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
+{ 
+	//clear the buffers
+    glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+	
+    //and load the identity matrix
+    glLoadIdentity();
+    
+    //bring in the background texture
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[0]->sizeX, TextureImage[0]->sizeY, 
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
+	
+    //and map it
 	pinBackgroundTexture();
-	figureFighter();
+	
+	//figure out where the fighter/ship is going to be
+    figureFighter();
+    
+    //move the draw points that way!
 	glTranslatef(f_x,f_y,f_z);
+	
+	//draw the fighter
 	glBegin(GL_TRIANGLES);
 	
 	//left top
@@ -163,8 +164,8 @@ void myDisplay(void)
 	glVertex3f(0.0,1.0,0.0);
 	glVertex3f(0.0,0.0,-2.0);
   
-  //right top
-  glColor3f(0,1,0);
+    //right top
+    glColor3f(0,1,0);
 	glVertex3f(2.0,0.0,0.0);
 	glVertex3f(0.0,1.0,0.0);
 	glVertex3f(0.0,0.0,-2.0);
@@ -182,13 +183,19 @@ void myDisplay(void)
 	glVertex3f(0.0,1.0,0.0);
 	
 	glEnd();
-   	glTranslatef(-f_x,-f_y,-f_z);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
+   	
+    //reset the movement
+    glTranslatef(-f_x,-f_y,-f_z);
+	
+	//change the current texture
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
-        startScreen();
-
-  glutSwapBuffers();
-  glutPostRedisplay();
+    //and display the intro screen (if the intro is still about)
+    startScreen();
+    
+    //deflicker and re-display
+    glutSwapBuffers();
+    glutPostRedisplay();
 }
 
 //////////////////////////////////////////////////////
@@ -207,11 +214,11 @@ void helpDisplay(void)
 	glRasterPos2f(0, 2);
 	bigText("'i' to display this message");
 	
-	//a little higher for the next message
+	//a little lower for the next message
 	glRasterPos2f(0, 1);
 	bigText("'c' to close this window");
 
-	//and even hight for the last message
+	//and even lower for the last message
 	glRasterPos2f(0,0);
 	bigText("'q' to quit");
 
@@ -223,13 +230,7 @@ void helpDisplay(void)
 }
 
 ////////////////////////////////////////////////////////////
-void myInit (void) //set the background color, the lights, and the texture
-{
-	glEnable(GL_DEPTH_TEST);
-	glClearColor(0,0,0,0);  //black
-	
-	 
-}
+
 
 /////////////////////////////////////////////////////////////////////
 /*Sets range for resizing screen and resets camera view for
@@ -291,6 +292,8 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
 //OGL sends us the key character and where on the screen it was pressed.
 {
   key = toupper(key);
+  
+  //check for keypress (switch doesn't take non-statics)
   if(key == up)
          f_vel_y = 0.1f;
     else if(key==down)
@@ -299,6 +302,8 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
          f_vel_x = -0.1f;
     else if(key==right)
          f_vel_x = 0.1f;
+         
+  //check statics
 	switch(key)
 	{
     case 'Q':
@@ -317,10 +322,8 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
          break;
     default:
             break;
-            
-    
-            
-		  glutPostRedisplay();
+    //redisplay the screen;
+    glutPostRedisplay();
 	}
 }
 
@@ -405,31 +408,33 @@ void pinIntro(){
 
 		//Change the vertex locations where the texture is mapped and see the result
   
-	glEnd();  // done with the texture map
-	glDisable(GL_TEXTURE_2D); //We don't want to map onto the sphere 
+    // stop the rectangle!
+	glEnd();  
+	
+	//turn off textures
+	glDisable(GL_TEXTURE_2D); 
+	
+	//display it all
 	glutSwapBuffers();
 	glutPostRedisplay();
      }
 
+
+//timer for good measure. 50 frames a second. Kind of heavy
 void myTime(int time){
      	glutPostRedisplay();
 	glutTimerFunc(1000/50,myTime,1);
      }
+//find out where the fighter is
  void figureFighter(){
       //min,max x= -3, 3
       //min,max y = -3, 3
-//      f_vel_x += f_accel_x;
-//      f_vel_y += f_accel_y; 
-//      if(-.05 <= f_vel_x <= 0.05)
-//      f_vel_x = 0;
-//      else{}
       
-                   
-                  
-
+      //move the fighter via velocity
       f_x += f_vel_x;
       f_y += f_vel_y;
 
+      //check for edges
       if(f_x>3){
                 f_x = 3;
                 f_vel_x = 0;
@@ -442,9 +447,8 @@ void myTime(int time){
                 f_y=3;
                 f_vel_y=0;
                 }
-      if(f_y<-3){
-                 f_y=-3;
+      if(f_y<-4){
+                 f_y=-4;
                  f_vel_y=0;
                  }
-                 
       }
