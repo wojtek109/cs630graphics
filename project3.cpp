@@ -25,14 +25,35 @@ int main(int argc, char** argv)
    glutAttachMenu(GLUT_RIGHT_BUTTON);
    
    // Help Menu Window
-   glutInitWindowSize(240,350);
-   glutInitWindowPosition(555,50);
+   glutInitWindowSize(320,180);
+   glutInitWindowPosition(600,50);
    helpWindow = glutCreateWindow("Help Menu");
    glutDisplayFunc(helpDisplay);
    glutKeyboardFunc(myKeyboard);
    glutReshapeFunc(myReshape);
    glutHideWindow();
    glutSetWindow(mainWindow);
+
+    glEnable(GL_TEXTURE_2D);
+	gluQuadricTexture(quadricObj, GLU_TRUE);
+	
+	TextureImage[0] = auxDIBImageLoad("galaxy-512x512.bmp"); //load the image file
+	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
+	//	NOTE: BE SURE BACKGROUND IMAGE IS LOCATED IN THE PROJECT DIRECTORY!
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //set the pixel storage mode
+	glGenTextures(1, &myTexture); //generate one texture identified as myTexture
+	glBindTexture(GL_TEXTURE_2D, myTexture); //tells which texture we will be working with.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glutTimerFunc(1000,myTime,1);
+	
+        
+		
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+
 
    myInit();
    glutMainLoop();
@@ -42,11 +63,16 @@ int main(int argc, char** argv)
 /*Main Window Display*/
 void myDisplay(void)
 {
+
+     
+     
 	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[0]->sizeX, TextureImage[0]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
 	pinBackgroundTexture();
-	
+	figureFighter();
+	glTranslatef(f_x,f_y,f_z);
 	glBegin(GL_TRIANGLES);
 	
 	//left top
@@ -74,7 +100,10 @@ void myDisplay(void)
 	glVertex3f(0.0,1.0,0.0);
 	
 	glEnd();
-    startScreen();
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
+        startScreen();
+
   glutSwapBuffers();
   glutPostRedisplay();
 }
@@ -84,25 +113,29 @@ void myDisplay(void)
 void helpDisplay(void)
 {
   
-  glClearColor(0.0, 0.0, 0.0, 0.0); //Set bkgrnd-color
-  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  glColor3f(1.0, 1, 1); // Set lettercolor white
-  
-  glRasterPos2f(-2, 4.5);
-  bigText("HELP MENU");
-  
-  glRasterPos2f(-4, 3);
-  bigText("I  for Instructions");
-  
-  glRasterPos2f(-4, 0);
-  bigText("F  to Fullscreen");
-  
-  glRasterPos2f(-4, -1.5);
-  bigText("Q  to Quit");
+  	//clear black background
+	glClearColor(0,0,0,0);
+	glClear(GL_COLOR_BUFFER_BIT);
+		
+	//change draw color to white
+	glColor3f(1.0, 1.0,1.0); 
+	
+	//set draw position
+	glRasterPos2f(0, 2);
+	bigText("'i' to display this message");
+	
+	//a little higher for the next message
+	glRasterPos2f(0, 1);
+	bigText("'c' to close this window");
 
-  glutSwapBuffers();
-  glutPostRedisplay();
-  glutSetWindow(mainWindow);
+	//and even hight for the last message
+	glRasterPos2f(0,0);
+	bigText("'q' to quit");
+
+	//execute commands
+	glutSwapBuffers();
+	glutPostRedisplay();
+
   
 }
 
@@ -112,21 +145,7 @@ void myInit (void) //set the background color, the lights, and the texture
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0,0,0,0);  //black
 	
-	glEnable(GL_TEXTURE_2D);
-	gluQuadricTexture(quadricObj, GLU_TRUE);
-	AUX_RGBImageRec *TextureImage[1];	//setup a pointer to the texture
-	TextureImage[0] = auxDIBImageLoad("galaxy-512x512.bmp"); //load the image file
-	//	NOTE: BE SURE BACKGROUND IMAGE IS LOCATED IN THE PROJECT DIRECTORY!
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //set the pixel storage mode
-	glGenTextures(1, &myTexture); //generate one texture identified as myTexture
-	glBindTexture(GL_TEXTURE_2D, myTexture); //tells which texture we will be working with.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[0]->sizeX, TextureImage[0]->sizeY, 
-		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); 
+	 
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -191,7 +210,7 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
   key = toupper(key);
 	switch(key)
 	{
-	  case 'Q':
+    case 'Q':
 		  exit(0);
 		  break;
     case 'I':
@@ -201,11 +220,26 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
     case 'F':
          checkFullscreen();
          break;
-         case 'C':
-              glutSetWindow(helpWindow);
-              glutHideWindow();
-              break;
+    case 'C':
+         glutSetWindow(helpWindow);
+         glutHideWindow();
+         break;
+    case 'W':
+         f_vel_y = 0.1f;
+         break;
+    case 'S':
+         f_vel_y = -0.1f;
+         break;
+    case 'A':
+         f_vel_x = -0.1f;
+         break;
+    case 'D':
+         f_vel_x = 0.1f;
+         break;
     default:
+            
+            break;
+            
 		  glutPostRedisplay();
 	}
 }
@@ -213,7 +247,7 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
 //////////////////////////////////////////////////////////////////////
 void bigText(char *s){
 	for (unsigned int i=0; i<strlen(s); i++)
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, s[i]);
 } 
 
 ////////////////////////////////////////////////////////////////////
@@ -230,22 +264,22 @@ void pinBackgroundTexture(void)
 
 		//Set the bottom left of the image
 		glTexCoord2f(0.0f, 0.0f); //bottom left of the 2D viewport in the window
-		glVertex3f(-20.0f, -70.0f, -12.0f); //bottom left back
+		glVertex3f(-50.0f, -70.0f, -12.0f); //bottom left back
 		//glVertex3f(-19.0f, -19.0f, -35.0f); //bottom left back
 
 		//Set the top left of the image
 		glTexCoord2f(0.0f, 1.0f); //top left of the 2D viewport in the window
-		glVertex3f(-10.0f, 10.0f, -12.0f); //top left back
+		glVertex3f(-50.0f, 10.0f, -12.0f); //top left back
 		//glVertex3f(-19.0f, 19.0f, -35.0f); //top left back
 
 		//Set the top right of the image
 		glTexCoord2f(1.0f, 1.0f); //top right of the 2D viewport in the window
-		glVertex3f( 10.0f, 10.0f, -12.0f); //top right back
+		glVertex3f( 50.0f, 10.0f, -12.0f); //top right back
 		//glVertex3f( 19.0f, 19.0f, 35.0f);
 
 		//Set the bottom right of the image
 		glTexCoord2f(1.0f, 0.0f); //bottom right of the 2D viewport in the window
-		glVertex3f( 20.0f, -70.0f, -12.0f); //bottom right back
+		glVertex3f( 50.0f, -70.0f, -12.0f); //bottom right back
 		//glVertex3f( 19.0f, -19.0f, -35.0f); //bottom right back
 
 		//Change the vertex locations where the texture is mapped and see the result
@@ -256,6 +290,78 @@ void pinBackgroundTexture(void)
 }
 void startScreen(){
      if(intro){
-               
+               introAlpha --;
+               pinIntro();
                }
+     if(introAlpha <= 0){
+     intro = 0;                       
+     }
+                            
 }
+void pinIntro(){
+	
+	glEnable(GL_TEXTURE_2D); 
+
+	glBegin(GL_QUADS);
+		//Set the bottom left of the image
+		glTexCoord2f(0.0f, 0.0f); //bottom left of the 2D viewport in the window
+        glVertex3f(-6.0f, -5.0f, 3.0f); //bottom left back
+		//glVertex3f(-19.0f, -19.0f, -35.0f); //bottom left back
+
+		//Set the top left of the image
+		glTexCoord2f(0.0f, 1.0f); //top left of the 2D viewport in the window
+		glVertex3f(-6.0f, 5.0f, 0.0f); //top left back
+		//glVertex3f(-19.0f, 19.0f, -35.0f); //top left back
+
+		//Set the top right of the image
+		glTexCoord2f(1.0f, 1.0f); //top right of the 2D viewport in the window
+		glVertex3f( 6.0f, 5.0f, 0.0f); //top right back
+		//glVertex3f( 19.0f, 19.0f, 35.0f);
+
+		//Set the bottom right of the image
+		glTexCoord2f(1.0f, 0.0f); //bottom right of the 2D viewport in the window
+		glVertex3f( 6.0f, -5.0f, 3.0f); //bottom right back
+		//glVertex3f( 19.0f, -19.0f, -35.0f); //bottom right back
+
+		//Change the vertex locations where the texture is mapped and see the result
+  
+	glEnd();  // done with the texture map
+	glDisable(GL_TEXTURE_2D); //We don't want to map onto the sphere 
+	glutSwapBuffers();
+	glutPostRedisplay();
+     }
+
+void myTime(int time){
+     	glutPostRedisplay();
+	glutTimerFunc(1000/50,myTime,1);
+     }
+ void figureFighter(){
+      //min,max x= -3, 3
+      //min,max y = -3, 3
+//      f_vel_x += f_accel_x;
+//      f_vel_y += f_accel_y;
+
+      f_x += f_vel_x;
+      f_y += f_vel_y;
+
+      if(f_x>3){
+                f_x = 3;
+                f_vel_x = 0;
+                }
+      if(f_x<-3){
+                 f_x = -3;
+                 f_vel_x = 0;
+                 }
+      if(f_y>3){
+                f_y=3;
+                f_vel_y=0;
+                }
+      if(f_y<-3){
+                 f_y=-3;
+                 f_vel_y=0;
+                 }
+      f_vel_x = 0.0f;
+      f_vel_y = 0.0f;
+//      f_accel_y = 0.0f;
+//      f_accel_x = 0.0f;
+      }
