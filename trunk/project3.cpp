@@ -255,6 +255,7 @@ void myReshape (int w, int h)
    glViewport (0, 0, (GLsizei) w, (GLsizei) h); 
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity();
+   
    //designate a perspective view for best 3D effect
    glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 40.0); 
    gluLookAt(0.0, 7.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
