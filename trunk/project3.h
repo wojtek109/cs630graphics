@@ -1,5 +1,22 @@
 #ifndef PROJECT3_H
 #define PROJECT3_H
+/****************************************************************************
+*  Space Flight Demo
+*  Authors:
+*          Alex Bonilla
+*          Ramil Nobleza
+*          Sunchol Yoo
+*  Description: This demo will feature a controllable spaceship
+*  which will fly through space through a path through asteroids
+*  and other objects. Shooting (hopefully) will be implemented soon.
+*
+******************************************************************************/
+
+//The ususal includes
+#include <cstdlib>
+#include <GL/glaux.h>
+#include <GL/glut.h>
+#include <cctype> //for bigText
 
 /*
 * Globals. I hate globals. But you have to use them I guess
