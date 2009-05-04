@@ -129,6 +129,7 @@ void myDisplay(void)
 	glVertex3f(0.0,1.0,0.0);
 	
 	glEnd();
+   	glTranslatef(-f_x,-f_y,-f_z);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
         startScreen();
@@ -237,6 +238,14 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
 //OGL sends us the key character and where on the screen it was pressed.
 {
   key = toupper(key);
+  if(key == up)
+         f_vel_y = 0.1f;
+    else if(key==down)
+         f_vel_y = -0.1f;
+    else if(key ==left)
+         f_vel_x = -0.1f;
+    else if(key==right)
+         f_vel_x = 0.1f;
 	switch(key)
 	{
     case 'Q':
@@ -253,21 +262,10 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
          glutSetWindow(helpWindow);
          glutHideWindow();
          break;
-    case 'W':
-         f_vel_y = 0.1f;
-         break;
-    case 'S':
-         f_vel_y = -0.1f;
-         break;
-    case 'A':
-         f_vel_x = -0.1f;
-         break;
-    case 'D':
-         f_vel_x = 0.1f;
-         break;
     default:
-            
             break;
+            
+    
             
 		  glutPostRedisplay();
 	}
