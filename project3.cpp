@@ -124,19 +124,32 @@ void mainKeyUp(unsigned char key, int pointx, int pointy){
      key = toupper(key);
      if(key == up){
      f_vel_y = 0.0f;
-     f_pitch = 0.0f;
+//     f_pitch = 0.0f;
+       goingUp = 0;
+       goingDown = 0;
+       levelling = 1;
      }
      else if(key == down){
      f_vel_y = 0.0f;
-     f_pitch = 0.0f;
+     goingDown = 0;
+     goingUp = 0;
+     levelling = 1;
+//     f_pitch = 0.0f;
      }
      else if(key == left){
      f_vel_x = 0.0f;
-     f_roll = 0.0f;
+  //   f_roll = 0.0f;
+     goingLeft = 0;
+     goingRight = 0;
+     noRoll = 1;
      }
      else if(key == right){
      f_vel_x = 0.0f;
-     f_roll = 0.0f;
+   //  f_roll = 0.0f;
+     goingLeft = 0;
+     goingRight = 0;
+     noRoll = 1;
+     
      }
      }
 
@@ -155,7 +168,9 @@ void myDisplay(void)
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
 	
     //and map it
-	pinBackgroundTexture();
+	pinFloor();
+    pinBackgroundTexture();
+
 	
 	//figure out where the fighter/ship is going to be
     figureFighter();
@@ -164,7 +179,7 @@ void myDisplay(void)
 	glTranslatef(f_x,f_y,f_z);
 	
 	//and rotate too
-	glRotatef(f_roll,0,0,1);
+	glRotatef(f_roll,0,1,0);
 	glRotatef(f_pitch,1,0,0);
 	
 	//draw the fighter
@@ -195,7 +210,22 @@ void myDisplay(void)
 	glVertex3f(0.0,1.0,0.0);
 	
 	glEnd();
-   	
+	
+   	if(shoot){
+   	glBegin(GL_TRIANGLES);
+   	glColor3f(.9,.9,1);
+   	glVertex3f(-1, -0.75,-2.5);
+   	glVertex3f(-1.5,-10.0, -20.0);
+    glVertex3f(-.75,-10.0, -20.0);
+
+   	glColor3f(.9,.9,1);
+   	glVertex3f(1, -0.75,-2.5);
+   	glVertex3f(1.25,-10.0, -20.0);
+    glVertex3f(0.75,-10.0, -20.0);
+   // glVertex3f(1,-20.0,-20.0);
+    glEnd();
+    shoot = 0;
+    }
     //reset the movement
     glRotatef(-f_pitch,1,0,0);
     glRotatef(-f_roll,0,0,1);
@@ -257,7 +287,7 @@ void myReshape (int w, int h)
    glLoadIdentity();
    
    //designate a perspective view for best 3D effect
-   glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 40.0); 
+   glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 100.0); 
    gluLookAt(0.0, 7.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
    glMatrixMode (GL_MODELVIEW);  
 }
@@ -311,20 +341,37 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
   //check for keypress (switch doesn't take non-statics)
   if(key == up){
          f_vel_y = 0.1f;
-         f_pitch = 10.0f;
+         goingDown = 0;
+         goingUp = 1;
+         levelling = 0;
+         //f_pitch = 10.0f;
          }
     else if(key==down){
          f_vel_y = -0.1f;
-         f_pitch = -10.0f;
+         goingUp = 0;
+         goingDown = 1;
+         levelling = 0;
+         //f_pitch = -10.0f;
          }
     else if(key ==left){
          f_vel_x = -0.1f;
-         f_roll = 10.0f;
+         goingRight = 0;
+
+         goingLeft = 1;
+         noRoll = 0;
+         
+//         f_roll = 10.0f;
          }
     else if(key==right){
          f_vel_x = 0.1f;
-         f_roll = -10.0f;
+//         f_roll = -10.0f;
+           goingLeft = 0;
+           goingRight = 1;
+           noRoll = 0;
          }
+         if(key == fire){
+                shoot = 1;
+                }
   //check statics
 	switch(key)
 	{
@@ -369,23 +416,24 @@ void pinBackgroundTexture(void)
 
 		//Set the bottom left of the image
 		glTexCoord2f(0.0f, 0.0f); //bottom left of the 2D viewport in the window
-		glVertex3f(-50.0f, -35.0f, 10.0f); //bottom left back
+		glVertex3f(-50.0f, -100.0f, -40.0f); //bottom left back
 		//glVertex3f(-19.0f, -19.0f, -35.0f); //bottom left back
 
 		//Set the top left of the image
 		glTexCoord2f(0.0f, 1.0f); //top left of the 2D viewport in the window
-		glVertex3f(-50.0f, 10.0f, -12.0f); //top left back
+		glVertex3f(-50.0f, 0.0f, -40.0f); //top left back
 		//glVertex3f(-19.0f, 19.0f, -35.0f); //top left back
 
 		//Set the top right of the image
 		glTexCoord2f(1.0f, 1.0f); //top right of the 2D viewport in the window
-		glVertex3f( 50.0f, 10.0f, -12.0f); //top right back
+		glVertex3f( 50.0f, 0.0f, -40.0f); //top right back
 		//glVertex3f( 19.0f, 19.0f, 35.0f);
 
 		//Set the bottom right of the image
 		glTexCoord2f(1.0f, 0.0f); //bottom right of the 2D viewport in the window
-		glVertex3f( 50.0f, -35.0f, 10.0f); //bottom right back
+		glVertex3f( 50.0f, -100.0f, -40.0f); //bottom right back
 		//glVertex3f( 19.0f, -19.0f, -35.0f); //bottom right back
+        //floor, bottom right
 
 		//Change the vertex locations where the texture is mapped and see the result
   
@@ -393,6 +441,26 @@ void pinBackgroundTexture(void)
 	glDisable(GL_TEXTURE_2D); //We don't want to map onto the sphere 
   //////////////////////////////////////////////////////////////////////
 }
+void pinFloor(){
+     glEnable(GL_TEXTURE_2D);
+     glBegin(GL_QUADS);
+             		glTexCoord2f(1,1);
+
+        glVertex3f( 50.0f,-20.0f,-40.0f);
+
+        		glTexCoord2f(0,1);
+
+        glVertex3f(-50.0f, -20.0f,-40.0f);
+
+        		glTexCoord2f(0,0);
+
+        glVertex3f(-50.0f,-20.0f,0.0f);
+        		glTexCoord2f(1,0);
+
+        glVertex3f(50.0f,-20.0f,0.0f);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+     }
 void startScreen(){
      if(intro){
                introAlpha --;
@@ -442,16 +510,73 @@ void pinIntro(){
      }
 
 
-//timer for good measure. 50 frames a second. Kind of heavy
+//timer for good measure. 30 frames a second. Kind of heavy
 void myTime(int time){
      	glutPostRedisplay();
-	glutTimerFunc(1000/50,myTime,1);
+	glutTimerFunc(1000/30,myTime,1);
      }
 //find out where the fighter is
  void figureFighter(){
       //min,max x= -3, 3
       //min,max y = -3, 3
-      
+      if(goingUp){
+                  if(f_pitch < pitchMax){
+                                    f_pitch += 1;
+                                    }
+                  else{
+                                    goingUp = 0;
+                                    //levelling = 1;
+                                    }
+                                    }             
+      else if(goingDown){
+                         if(f_pitch >-pitchMax){
+                                    f_pitch -= 1;
+                                    }
+                         else{
+                                    goingDown = 0;
+                                    //levelling = 1;
+                                    }
+                                    }
+      if(levelling){
+                    if(f_pitch > 0.0f){
+                               f_pitch -=0.4f;
+                    }
+                    if(f_pitch < 0.0f){
+                               f_pitch += 0.4f;
+                               }
+                  //  if( -0.1f <= f_pitch <= 0.01f){
+                  //             f_pitch = 0;
+//      }
+                                              }
+            if(goingRight){
+                  if(f_roll > -rollMax){
+                                    f_roll -= 1.5;
+                                    }
+                  else{
+                                    goingRight = 0;
+                                    //levelling = 1;
+                                    }
+                                    }             
+      else if(goingLeft){
+                         if(f_roll < rollMax){
+                                    f_roll += 1.5;
+                                    }
+                         else{
+                                    goingLeft = 0;
+                                    //levelling = 1;
+                                    }
+                                    }
+      if(noRoll){
+                    if(f_roll > 0.0f){
+                               f_roll -=0.5f;
+                    }
+                    if(f_roll < 0.0f){
+                               f_roll += 0.5f;
+                               }
+                  //  if( -0.1f <= f_pitch <= 0.01f){
+                  //             f_pitch = 0;
+//      }
+                                              }
       //move the fighter via velocity
       f_x += f_vel_x;
       f_y += f_vel_y;
@@ -469,8 +594,8 @@ void myTime(int time){
                 f_y=3;
                 f_vel_y=0;
                 }
-      if(f_y<-4){
-                 f_y=-4;
+      if(f_y<-7){
+                 f_y=-7;
                  f_vel_y=0;
                  }
       }
