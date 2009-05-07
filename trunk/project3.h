@@ -49,6 +49,19 @@ int up = 'W';
 int down = 'S';
 int left = 'A';
 int right = 'D';
+int fire = ' ';
+
+int shoot = 0;
+
+int goingUp = 0;
+int goingDown = 0;
+int levelling = 0;
+int goingLeft = 0;
+int goingRight = 0;
+int noRoll = 0;
+
+float pitchMax = 30.0f;
+float rollMax = 30.0f;
 
 /*
 * Declarations. In no particular order.
@@ -68,5 +81,6 @@ void myTime(int time);
 void figureFighter(void);
 void loadImages(void);
 void mainKeyUp(unsigned char key, int pointx, int pointy);
+void pinFloor();
 
 #endif
