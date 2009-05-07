@@ -26,7 +26,7 @@ GLint main_menu;
 GLint mainWindow, helpWindow;
 GLuint myTexture;  //the texture variable
 GLUquadricObj *quadricObj = gluNewQuadric(); 
-AUX_RGBImageRec *TextureImage[2];	//setup a  pointer to the texture
+AUX_RGBImageRec *TextureImage[3];	//setup a  pointer to the texture
 	
 /*
 * Environment variables
