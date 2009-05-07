@@ -228,7 +228,7 @@ void myDisplay(void)
     }
     //reset the movement
     glRotatef(-f_pitch,1,0,0);
-    glRotatef(-f_roll,0,0,1);
+    glRotatef(-f_roll,0,1,0);
     glTranslatef(-f_x,-f_y,-f_z);
 	
 	//change the current texture
@@ -370,6 +370,7 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
            noRoll = 0;
          }
          if(key == fire){
+                    PlaySound(TEXT("15.wav"),NULL,SND_ASYNC);
                 shoot = 1;
                 }
   //check statics
