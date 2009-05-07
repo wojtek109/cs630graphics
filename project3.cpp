@@ -80,7 +80,7 @@ int main(int argc, char** argv)
    	gluQuadricTexture(quadricObj, GLU_TRUE);
     	
    	//load the images into memory
-    TextureImage[0] = auxDIBImageLoad("galaxy-512x512.bmp"); //load the image file
+    TextureImage[0] = auxDIBImageLoad("space.bmp"); //load the image file
    	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
 
     //pixel storage mode (drawing options)
