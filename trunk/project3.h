@@ -19,6 +19,7 @@
 #include <cctype> //for bigText
 #include <windows.h>
 
+
 /*
 * Globals. I hate globals. But you have to use them I guess
 */

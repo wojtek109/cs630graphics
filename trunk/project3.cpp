@@ -5,6 +5,7 @@
 * Main loop.
 * Big fat initialization!
 */
+
 int main(int argc, char** argv)
 {
     //we always call this
@@ -13,8 +14,8 @@ int main(int argc, char** argv)
     //double-buffered, rgb color with depth-testing
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
     
-    //create a 500 x 500 pixel window
-    glutInitWindowSize (500, 500);
+    //create a 600 x 600 pixel window
+    glutInitWindowSize (600, 600);
     
     // and put it @ 50 x 50 from the top-left of the screen 
     glutInitWindowPosition (50, 50);
@@ -182,6 +183,8 @@ void myDisplay(void)
 	glRotatef(f_roll,0,1,0);
 	glRotatef(f_pitch,1,0,0);
 	
+
+
 	//draw the fighter
 	glBegin(GL_TRIANGLES);
 	
@@ -224,6 +227,9 @@ void myDisplay(void)
     glVertex3f(0.75,-10.0, -20.0);
    // glVertex3f(1,-20.0,-20.0);
     glEnd();
+
+	
+
     shoot = 0;
     }
     //reset the movement
