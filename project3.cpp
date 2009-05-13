@@ -1,7 +1,7 @@
 //including the 
 #include "project3.h"
 
-/*
+/* 
 * Main loop.
 * Big fat initialization!
 */
@@ -83,7 +83,7 @@ int main(int argc, char** argv)
    	//load the images into memory
     TextureImage[0] = auxDIBImageLoad("space.bmp"); //load the image file
    	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
-
+    TextureImage[2] = auxDIBImageLoad("ship.bmp"); //load the image file
     //pixel storage mode (drawing options)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -107,10 +107,10 @@ int main(int argc, char** argv)
     
     //enable z-testing for draw-order
     glEnable(GL_DEPTH_TEST);
-    
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE);
     //set bg-color
 	glClearColor(0,0,0,0);
-    
+  //  PlaySound("StarFox_Asteroid.mid",NULL,SND_ASYNC);
     //and process events   
     glutMainLoop();
        return 0;
@@ -169,7 +169,7 @@ void myDisplay(void)
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
 	
     //and map it
-	pinFloor();
+//	pinFloor();
     pinBackgroundTexture();
 
 	
@@ -186,6 +186,7 @@ void myDisplay(void)
 
 
 	//draw the fighter
+	
 	glBegin(GL_TRIANGLES);
 	
 	//left top
@@ -233,6 +234,24 @@ void myDisplay(void)
     shoot = 0;
     }
     //reset the movement
+    glEnable(GL_BLEND);
+    glBegin(GL_QUADS);
+    glColor4f(0.0f,1.0f,0.0f,0.40f);
+    glVertex3f(-1.5,-11.5,-20);
+    glVertex3f(-1.5,-8.5,-20);
+    glVertex3f(1.5,-8.5,-20);
+    glVertex3f(1.5,-11.5,-20);
+    glEnd();
+    glLineWidth(2.0f);
+    glColor4f(0.0f,1.0f,0.0f,1.0f);
+    glBegin(GL_LINES);
+    glVertex3f(0.0f, -10.5f, -19.8f);
+    glVertex3f(0.0f, -9.5f, -19.8f);
+    glVertex3f(-1.0f,-10.0f,-19.8f);
+    glVertex3f(1.0f,-10.0f,-19.8f);
+    glEnd();
+    
+    glDisable(GL_BLEND);
     glRotatef(-f_pitch,1,0,0);
     glRotatef(-f_roll,0,1,0);
     glTranslatef(-f_x,-f_y,-f_z);
@@ -485,22 +504,25 @@ void pinIntro(){
 	glBegin(GL_QUADS);
 		//Set the bottom left of the image
 		glTexCoord2f(0.0f, 0.0f); //bottom left of the 2D viewport in the window
-        glVertex3f(-6.0f, -5.0f, 3.0f); //bottom left back
-		//glVertex3f(-19.0f, -19.0f, -35.0f); //bottom left back
+        //glVertex3f(-3.2f, 0.0f, 4.5f); //bottom left back
+		glVertex3f(-3.7f, 0.0f, 4.5f); //bottom left back
+		
+        //glVertex3f(-19.0f, -19.0f, -35.0f); //bottom left back
 
 		//Set the top left of the image
 		glTexCoord2f(0.0f, 1.0f); //top left of the 2D viewport in the window
-		glVertex3f(-6.0f, 5.0f, 0.0f); //top left back
+		//glVertex3f(-3.0f, 4.5f, 0.0f); //top left back
+        glVertex3f(-3.7f, 4.5f, 0.0f); //top left back
 		//glVertex3f(-19.0f, 19.0f, -35.0f); //top left back
 
 		//Set the top right of the image
 		glTexCoord2f(1.0f, 1.0f); //top right of the 2D viewport in the window
-		glVertex3f( 6.0f, 5.0f, 0.0f); //top right back
+		glVertex3f( 4.0f, 4.5f, 0.0f); //top right back
 		//glVertex3f( 19.0f, 19.0f, 35.0f);
 
 		//Set the bottom right of the image
 		glTexCoord2f(1.0f, 0.0f); //bottom right of the 2D viewport in the window
-		glVertex3f( 6.0f, -5.0f, 3.0f); //bottom right back
+		glVertex3f( 3.2f, 0.0f, 4.5f); //bottom right back
 		//glVertex3f( 19.0f, -19.0f, -35.0f); //bottom right back
 
 		//Change the vertex locations where the texture is mapped and see the result
