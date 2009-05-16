@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
     
     //create a 600 x 600 pixel window
-    glutInitWindowSize (600, 600);
+    glutInitWindowSize (800, 600);
     
     // and put it @ 50 x 50 from the top-left of the screen 
     glutInitWindowPosition (50, 50);
@@ -40,11 +40,13 @@ int main(int argc, char** argv)
     
     //menu creation (with a callback function for selection)   
     main_menu=glutCreateMenu(myMenu);
-    
     //adding members to the menu
     glutAddMenuEntry("Instructions",1);
     glutAddMenuEntry("Toggle Fullscreen",2);
     glutAddMenuEntry("Quit",3);
+    
+    //load the fighter
+    modelAPI.Load("fighter.3ds");
     
     //and attaching it to an event (right-mouse click)
     glutAttachMenu(GLUT_RIGHT_BUTTON);
@@ -104,7 +106,8 @@ int main(int argc, char** argv)
             
     //texture options (all I know is GL_REPLACE draws over other stuff)		
    	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    
+
+
     //enable z-testing for draw-order
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
@@ -158,8 +161,34 @@ void mainKeyUp(unsigned char key, int pointx, int pointy){
 /*Main Window Display*/
 void myDisplay(void)
 { 
+     
 	//clear the buffers
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+    /*testing 3rd person */
+	   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity();
+   
+   //designate a perspective view for best 3D effect
+   glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0); 
+   camerax = cameraDistance * cos((f_roll + 270.0f) * M_PI / 180) + f_x;
+   cameraz = cameraDistance * -sin((f_roll + 270.0f) * M_PI / 180) + f_z;
+
+//   glTranslatef(f_x,f_y,f_z);
+//	glRotatef(-f_roll,0,1,0);
+//	glRotatef(-f_pitch,1,0,0);
+
+//   gluLookAt(camerax, 0.0, 
+   //cameraz
+//   cameraz, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
+   
+/*       glRotatef(-f_pitch,1,0,0);
+    glRotatef(-f_roll,0,1,0);
+    glTranslatef(-f_x,-f_y,-f_z);
+*/
+   
+   /*with this code*/
+
+   glMatrixMode (GL_MODELVIEW);  
 	
     //and load the identity matrix
     glLoadIdentity();
@@ -169,8 +198,12 @@ void myDisplay(void)
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
 	
     //and map it
+    glEnable(GL_TEXTURE_2D);
+    gluSphere(quadricObj,500.0, 20,20);
+    glDisable(GL_TEXTURE_2D);
+    
 //	pinFloor();
-    pinBackgroundTexture();
+//    pinBackgroundTexture();
 
 	
 	//figure out where the fighter/ship is going to be
@@ -183,11 +216,77 @@ void myDisplay(void)
 	glRotatef(f_roll,0,1,0);
 	glRotatef(f_pitch,1,0,0);
 	
-
-
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[2]->sizeX, TextureImage[2]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[2]->data); 
+    drawFighter();
 	//draw the fighter
 	
-	glBegin(GL_TRIANGLES);
+	
+	
+   	if(shoot){
+   	glBegin(GL_TRIANGLES);
+   	glColor3f(.9,.9,1);
+   	glVertex3f(-1, 0,-2.5);
+   	glVertex3f(-1.5,0.0, -20.0);
+    glVertex3f(-.75,0.0, -20.0);
+
+   	glColor3f(.9,.9,1);
+   	glVertex3f(1, 0.0,-2.5);
+   	glVertex3f(1.25,0.0, -20.0);
+    glVertex3f(0.75,0.0, -20.0);
+   // glVertex3f(1,-20.0,-20.0);
+    glEnd();
+
+	
+
+    shoot = 0;
+    }
+    //reset the movement
+    glEnable(GL_BLEND);
+    glBegin(GL_QUADS);
+    glColor4f(0.0f,1.0f,0.0f,0.40f);
+    glVertex3f(-1.5,1.5,-20);
+    glVertex3f(-1.5,-1.5,-20);
+    glVertex3f(1.5,-1.5,-20);
+    glVertex3f(1.5,1.5,-20);
+    glEnd();
+    glLineWidth(2.0f);
+    glColor4f(0.0f,1.0f,0.0f,1.0f);
+    glBegin(GL_LINES);
+    glVertex3f(0.0f, 1.0f, -19.8f);
+    glVertex3f(0.0f, -1.0f, -19.8f);
+    glVertex3f(-1.0f,0.0f,-19.8f);
+    glVertex3f(1.0f,0.0f,-19.8f);
+    glEnd();
+    
+    glDisable(GL_BLEND);
+    glRotatef(-f_pitch,1,0,0);
+    glRotatef(-f_roll,0,1,0);
+    glTranslatef(-f_x,-f_y,-f_z);
+	
+	//change the current texture
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
+    //and display the intro screen (if the intro is still about)
+    startScreen();
+    
+    //deflicker and re-display
+    glutSwapBuffers();
+    glutPostRedisplay();
+}
+void drawFighter(void){
+    glColor3f(1,1,1);
+//    glRotatef(90,1,0,0);
+//    modelAPI.lit = false;
+//    modelAPI.shownormals = true;
+//     modelAPI.Draw();
+//     glDisable(GL_TEXTURE_2D);
+
+           
+//     glRotatef(-90,1,0,0); 
+//        glEnable(GL_TEXTURE_2D);
+ 
+     glBegin(GL_TRIANGLES);
 	
 	//left top
 	glColor3f(1,0,0);
@@ -214,58 +313,8 @@ void myDisplay(void)
 	glVertex3f(0.0,1.0,0.0);
 	
 	glEnd();
-	
-   	if(shoot){
-   	glBegin(GL_TRIANGLES);
-   	glColor3f(.9,.9,1);
-   	glVertex3f(-1, -0.75,-2.5);
-   	glVertex3f(-1.5,-10.0, -20.0);
-    glVertex3f(-.75,-10.0, -20.0);
-
-   	glColor3f(.9,.9,1);
-   	glVertex3f(1, -0.75,-2.5);
-   	glVertex3f(1.25,-10.0, -20.0);
-    glVertex3f(0.75,-10.0, -20.0);
-   // glVertex3f(1,-20.0,-20.0);
-    glEnd();
-
-	
-
-    shoot = 0;
+//	glDisable(GL_TEXTURE_2D);
     }
-    //reset the movement
-    glEnable(GL_BLEND);
-    glBegin(GL_QUADS);
-    glColor4f(0.0f,1.0f,0.0f,0.40f);
-    glVertex3f(-1.5,-11.5,-20);
-    glVertex3f(-1.5,-8.5,-20);
-    glVertex3f(1.5,-8.5,-20);
-    glVertex3f(1.5,-11.5,-20);
-    glEnd();
-    glLineWidth(2.0f);
-    glColor4f(0.0f,1.0f,0.0f,1.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, -10.5f, -19.8f);
-    glVertex3f(0.0f, -9.5f, -19.8f);
-    glVertex3f(-1.0f,-10.0f,-19.8f);
-    glVertex3f(1.0f,-10.0f,-19.8f);
-    glEnd();
-    
-    glDisable(GL_BLEND);
-    glRotatef(-f_pitch,1,0,0);
-    glRotatef(-f_roll,0,1,0);
-    glTranslatef(-f_x,-f_y,-f_z);
-	
-	//change the current texture
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
-		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
-    //and display the intro screen (if the intro is still about)
-    startScreen();
-    
-    //deflicker and re-display
-    glutSwapBuffers();
-    glutPostRedisplay();
-}
 
 //////////////////////////////////////////////////////
 /*Displays Second Window (Help Menu)*/
@@ -312,8 +361,8 @@ void myReshape (int w, int h)
    glLoadIdentity();
    
    //designate a perspective view for best 3D effect
-   glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 100.0); 
-   gluLookAt(0.0, 7.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+   glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0); 
+   gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
    glMatrixMode (GL_MODELVIEW);  
 }
 
@@ -365,30 +414,29 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
   
   //check for keypress (switch doesn't take non-statics)
   if(key == up){
-         f_vel_y = 0.1f;
+         f_vel_y = vel_y;
          goingDown = 0;
          goingUp = 1;
          levelling = 0;
          //f_pitch = 10.0f;
          }
     else if(key==down){
-         f_vel_y = -0.1f;
+         f_vel_y = -vel_y;
          goingUp = 0;
          goingDown = 1;
          levelling = 0;
          //f_pitch = -10.0f;
          }
     else if(key ==left){
-         f_vel_x = -0.1f;
+         f_vel_x = -vel_x;
          goingRight = 0;
-
          goingLeft = 1;
          noRoll = 0;
          
 //         f_roll = 10.0f;
          }
     else if(key==right){
-         f_vel_x = 0.1f;
+         f_vel_x = vel_x;
 //         f_roll = -10.0f;
            goingLeft = 0;
            goingRight = 1;
@@ -550,7 +598,7 @@ void myTime(int time){
       //min,max y = -3, 3
       if(goingUp){
                   if(f_pitch < pitchMax){
-                                    f_pitch += 1;
+                                    f_pitch += pitchSpeed;
                                     }
                   else{
                                     goingUp = 0;
@@ -559,7 +607,7 @@ void myTime(int time){
                                     }             
       else if(goingDown){
                          if(f_pitch >-pitchMax){
-                                    f_pitch -= 1;
+                                    f_pitch -= pitchSpeed;
                                     }
                          else{
                                     goingDown = 0;
@@ -568,27 +616,27 @@ void myTime(int time){
                                     }
       if(levelling){
                     if(f_pitch > 0.0f){
-                               f_pitch -=0.4f;
+                               f_pitch -=pitchLevel;
                     }
                     if(f_pitch < 0.0f){
-                               f_pitch += 0.4f;
+                               f_pitch += pitchLevel;
                                }
                   //  if( -0.1f <= f_pitch <= 0.01f){
                   //             f_pitch = 0;
-//      }
-                                              }
+      }
+                                              
             if(goingRight){
                   if(f_roll > -rollMax){
-                                    f_roll -= 1.5;
+                                    f_roll -= rollSpeed;
                                     }
                   else{
-                                    goingRight = 0;
+                                   goingRight = 0;
                                     //levelling = 1;
                                     }
                                     }             
       else if(goingLeft){
                          if(f_roll < rollMax){
-                                    f_roll += 1.5;
+                                    f_roll += rollSpeed;
                                     }
                          else{
                                     goingLeft = 0;
@@ -597,34 +645,34 @@ void myTime(int time){
                                     }
       if(noRoll){
                     if(f_roll > 0.0f){
-                               f_roll -=0.5f;
+                               f_roll -=rollLevel;
                     }
                     if(f_roll < 0.0f){
-                               f_roll += 0.5f;
+                               f_roll += rollLevel;
                                }
                   //  if( -0.1f <= f_pitch <= 0.01f){
                   //             f_pitch = 0;
-//      }
+      
                                               }
       //move the fighter via velocity
       f_x += f_vel_x;
       f_y += f_vel_y;
 
       //check for edges
-      if(f_x>3){
-                f_x = 3;
+      if(f_x>xmax){
+                f_x = xmax;
                 f_vel_x = 0;
                 }
-      if(f_x<-3){
-                 f_x = -3;
+      if(f_x<xmin){
+                 f_x = xmin;
                  f_vel_x = 0;
                  }
-      if(f_y>3){
-                f_y=3;
+      if(f_y>ymax){
+                f_y=ymax;
                 f_vel_y=0;
                 }
-      if(f_y<-7){
-                 f_y=-7;
+      if(f_y<ymin){
+                 f_y=ymin;
                  f_vel_y=0;
                  }
       }
