@@ -165,13 +165,13 @@ void myDisplay(void)
 	//clear the buffers
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     /*testing 3rd person */
-	   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity();
+//	   glMatrixMode (GL_PROJECTION);
+//   glLoadIdentity();
    
    //designate a perspective view for best 3D effect
-   glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0); 
-   camerax = cameraDistance * cos((f_roll + 270.0f) * M_PI / 180) + f_x;
-   cameraz = cameraDistance * -sin((f_roll + 270.0f) * M_PI / 180) + f_z;
+//   glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0); 
+//   camerax = cameraDistance * cos((f_roll + 270.0f) * M_PI / 180) + f_x;
+//   cameraz = cameraDistance * -sin((f_roll + 270.0f) * M_PI / 180) + f_z;
 
 //   glTranslatef(f_x,f_y,f_z);
 //	glRotatef(-f_roll,0,1,0);
