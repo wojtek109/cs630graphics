@@ -18,3 +18,5 @@ class Asteroid{
     float y;
     float z;
 };
+
+#endif
