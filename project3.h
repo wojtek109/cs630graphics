@@ -19,7 +19,7 @@
 #include <GL/glut.h>
 #include <cctype> //for bigText
 #include <windows.h>
-
+#include "star.h"
 
 #include "GLTexture.cpp"
 #include "Model_3DS.cpp"
@@ -33,24 +33,36 @@ GLuint myTexture;  //the texture variable
 GLUquadricObj *quadricObj = gluNewQuadric(); 
 AUX_RGBImageRec *TextureImage[4];	//setup a  pointer to the texture
 Model_3DS modelAPI;
-#ifndef pi
-#define pi 3.14159265357
-#endif
+
+
 /*
 * Environment variables
 */
+
+//screen mode
 bool fullscreen=0;
+
+//checking for intro screen
 bool intro = 1;
+
+//alpha effects for intro?
 int introAlpha = 100;
 
+//number of stars on screen
+int fieldSize = 50;
+
+//starfield array
+star field[50];
 /*
 * Fighter-specific variables. 
 * Position, Velocity and roll/pitch
 */
 float f_x, f_y = 0;
 float f_z = -1;
-float f_vel_x, f_vel_y, f_vel_z = 0.0 ;
+float f_vel_x, f_vel_y = 0.0 ;
 float f_roll, f_pitch = 0;
+float speed = 1.0f;
+
 
 /*
 * The following lines included to complement re-mapping of keys
@@ -63,6 +75,9 @@ int fire = ' ';
 
 int shoot = 0;
 
+/*
+* Movement-specific variables
+*/
 int goingUp = 0;
 int goingDown = 0;
 int levelling = 0;
@@ -79,7 +94,7 @@ float rollSpeed =2.1f;
 float pitchLevel = 0.5f;
 float rollLevel = 0.6f;
 
-float ymin = -5.0f;
+float ymin = -10.0f;
 float ymax = 3.0f;
 
 float xmax = 3.0f;
@@ -88,14 +103,14 @@ float xmin = -3.0f;
 float vel_x = 0.25f;
 float vel_y = 0.25f;
 
+//how far we want to view from
 float cameraDistance = 30.0f;
 
 float camerax = 0.0f;
 float cameraz = 0.0f;
-//float cameraz = cameraDistance * sin((yrot - 270.0f) * M_PI / 180) + zpos;
 
 /*
-* Declarations. In no particular order.
+* Function Declarations. In no particular order.
 */
 void myDisplay(void);
 void helpDisplay(void);
@@ -114,5 +129,8 @@ void loadImages(void);
 void mainKeyUp(unsigned char key, int pointx, int pointy);
 void pinFloor();
 void drawFighter();
-
+void updateStars();
+void drawStars();
+void drawShot();
+void crosshair();
 #endif
