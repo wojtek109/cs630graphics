@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     glutInitWindowPosition (50, 50);
     
     //actually instansiate the window   
-    mainWindow = glutCreateWindow ("Project 3b");
+    mainWindow = glutCreateWindow ("Project 3c");
     
     //define a display function for the window
     glutDisplayFunc(myDisplay); 
@@ -50,7 +50,12 @@ int main(int argc, char** argv)
     
     //and attaching it to an event (right-mouse click)
     glutAttachMenu(GLUT_RIGHT_BUTTON);
-       
+    
+    //creating star array
+    for(int i = 0; i < fieldSize; i++){
+            field[i].reset();
+    }
+    
     // Help window starts here
     // smaller window (in 16:9 even)
     glutInitWindowSize(320,180);
@@ -86,6 +91,7 @@ int main(int argc, char** argv)
     TextureImage[0] = auxDIBImageLoad("space.bmp"); //load the image file
    	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
     TextureImage[2] = auxDIBImageLoad("ship.bmp"); //load the image file
+    TextureImage[3] = auxDIBImageLoad("planet.bmp");
     //pixel storage mode (drawing options)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -194,13 +200,20 @@ void myDisplay(void)
     glLoadIdentity();
     
     //bring in the background texture
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[0]->sizeX, TextureImage[0]->sizeY, 
-		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
-	
+	//glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[0]->sizeX, TextureImage[0]->sizeY, 
+	//	0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
+	glTranslatef(200,-300,-500);
+    glColor3f(0,0,1);
+    gluSphere(quadricObj,200,20,20);
+    glTranslatef(-200,300,500);
     //and map it
-    glEnable(GL_TEXTURE_2D);
-    gluSphere(quadricObj,500.0, 20,20);
-    glDisable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
+//    gluSphere(quadricObj,1000.0, 20,20);
+//    glDisable(GL_TEXTURE_2D);
+    
+    //time to draw stars
+    updateStars();
+    drawStars();
     
 //	pinFloor();
 //    pinBackgroundTexture();
@@ -218,48 +231,20 @@ void myDisplay(void)
 	
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[2]->sizeX, TextureImage[2]->sizeY, 
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[2]->data); 
-    drawFighter();
-	//draw the fighter
+    
+    //draw the fighter
+	drawFighter();
 	
-	
-	
+	//draw the shot
    	if(shoot){
-   	glBegin(GL_TRIANGLES);
-   	glColor3f(.9,.9,1);
-   	glVertex3f(-1, 0,-2.5);
-   	glVertex3f(-1.5,0.0, -20.0);
-    glVertex3f(-.75,0.0, -20.0);
-
-   	glColor3f(.9,.9,1);
-   	glVertex3f(1, 0.0,-2.5);
-   	glVertex3f(1.25,0.0, -20.0);
-    glVertex3f(0.75,0.0, -20.0);
-   // glVertex3f(1,-20.0,-20.0);
-    glEnd();
-
-	
-
+    drawShot();
     shoot = 0;
     }
-    //reset the movement
-    glEnable(GL_BLEND);
-    glBegin(GL_QUADS);
-    glColor4f(0.0f,1.0f,0.0f,0.40f);
-    glVertex3f(-1.5,1.5,-20);
-    glVertex3f(-1.5,-1.5,-20);
-    glVertex3f(1.5,-1.5,-20);
-    glVertex3f(1.5,1.5,-20);
-    glEnd();
-    glLineWidth(2.0f);
-    glColor4f(0.0f,1.0f,0.0f,1.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, 1.0f, -19.8f);
-    glVertex3f(0.0f, -1.0f, -19.8f);
-    glVertex3f(-1.0f,0.0f,-19.8f);
-    glVertex3f(1.0f,0.0f,-19.8f);
-    glEnd();
     
-    glDisable(GL_BLEND);
+    //and the crosshair/aiming box    
+    crosshair();
+    
+    //reset the movement
     glRotatef(-f_pitch,1,0,0);
     glRotatef(-f_roll,0,1,0);
     glTranslatef(-f_x,-f_y,-f_z);
@@ -274,6 +259,11 @@ void myDisplay(void)
     glutSwapBuffers();
     glutPostRedisplay();
 }
+
+
+/*
+* Fighter figure function
+*/
 void drawFighter(void){
     glColor3f(1,1,1);
 //    glRotatef(90,1,0,0);
@@ -676,3 +666,56 @@ void myTime(int time){
                  f_vel_y=0;
                  }
       }
+void updateStars(){
+     for(int i = 0; i < fieldSize; i++){
+             field[i].updatez(speed);
+             if(field[i].getz() > 10){
+                                    field[i].reset();
+                                    }
+             }
+     }
+void drawStars(){
+     glBegin(GL_POINTS);
+     glColor3f(1,1,1);
+     for(int i = 0; i < fieldSize; i++){
+             glPointSize(field[i].getSize());
+             glVertex3f(field[i].getx(),field[i].gety(),field[i].getz());
+             }
+             glEnd();    
+}
+
+void drawShot(){
+        	glBegin(GL_TRIANGLES);
+   	glColor3f(.9,.9,1);
+   	glVertex3f(-1, 0,-2.5);
+   	glVertex3f(-1.5,0.0, -20.0);
+    glVertex3f(-.75,0.0, -20.0);
+
+   	glColor3f(.9,.9,1);
+   	glVertex3f(1, 0.0,-2.5);
+   	glVertex3f(1.25,0.0, -20.0);
+    glVertex3f(0.75,0.0, -20.0);
+   // glVertex3f(1,-20.0,-20.0);
+    glEnd();
+
+     }
+void crosshair(){
+     glEnable(GL_BLEND);
+    glBegin(GL_QUADS);
+    glColor4f(0.0f,1.0f,0.0f,0.40f);
+    glVertex3f(-1.5,1.5,-20);
+    glVertex3f(-1.5,-1.5,-20);
+    glVertex3f(1.5,-1.5,-20);
+    glVertex3f(1.5,1.5,-20);
+    glEnd();
+    glLineWidth(2.0f);
+    glColor4f(0.0f,1.0f,0.0f,1.0f);
+    glBegin(GL_LINES);
+    glVertex3f(0.0f, 1.0f, -19.8f);
+    glVertex3f(0.0f, -1.0f, -19.8f);
+    glVertex3f(-1.0f,0.0f,-19.8f);
+    glVertex3f(1.0f,0.0f,-19.8f);
+    glEnd();
+    
+    glDisable(GL_BLEND);
+}
