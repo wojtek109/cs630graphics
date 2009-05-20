@@ -55,7 +55,7 @@ void star::reset(){
      x = (rand()%20)-10;
      y = (rand()%20)-10;
      z = -20.0f - (rand()%50); 
-     size = (rand()%5)+10; 
+     size = (rand()%5)+10.0f; 
      }
 void star::operator=(star s){
      this->x = s.getx();

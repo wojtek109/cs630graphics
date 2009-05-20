@@ -15,14 +15,14 @@ int main(int argc, char** argv)
     //double-buffered, rgb color with depth-testing
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
     
-    //create a 600 x 600 pixel window
+    //create a 800 x 600 pixel window
     glutInitWindowSize (800, 600);
     
     // and put it @ 50 x 50 from the top-left of the screen 
     glutInitWindowPosition (50, 50);
     
     //actually instansiate the window   
-    mainWindow = glutCreateWindow ("Project 3c");
+    mainWindow = glutCreateWindow ("SPACE!... the game");
     
     //define a display function for the window
     glutDisplayFunc(myDisplay); 
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
    	//load the images into memory
     TextureImage[0] = auxDIBImageLoad("space.bmp"); //load the image file
    	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
-    TextureImage[2] = auxDIBImageLoad("ship.bmp"); //load the image file
+//    TextureImage[2] = auxDIBImageLoad("ship.bmp"); //load the image file
     TextureImage[3] = auxDIBImageLoad("planet.bmp");
     //pixel storage mode (drawing options)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -107,17 +107,22 @@ int main(int argc, char** argv)
    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    	
-   	//call initial time function (for a delay!)
-    glutTimerFunc(1000,myTime,1);
+   	
+
     	
             
     //texture options (all I know is GL_REPLACE draws over other stuff)		
    	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
+   	//call initial time function (for a delay!)
+    glutTimerFunc(1000,myTime,1);
 
     //enable z-testing for draw-order
     glEnable(GL_DEPTH_TEST);
+
+    //to enable alpha-blending
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+
     //set bg-color
 	glClearColor(0,0,0,0);
   //  PlaySound("StarFox_Asteroid.mid",NULL,SND_ASYNC);
@@ -201,12 +206,21 @@ void myDisplay(void)
     glLoadIdentity();
     
     //bring in the background texture
-	//glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[0]->sizeX, TextureImage[0]->sizeY, 
-	//	0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data); 
-	glTranslatef(200,-300,-500);
-    glColor3f(0,0,1);
-    gluSphere(quadricObj,200,20,20);
-    glTranslatef(-200,300,500);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[3]->sizeX, TextureImage[3]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[3]->data); 
+	glTranslatef(300,-275,-500);
+    glEnable(GL_TEXTURE_2D);
+//    glColor3f(0,0,1);
+    glRotatef(rotation,0,1,0);
+    glRotatef(-90,1,0,0);
+    gluSphere(quadricObj,200,200,200);
+    glRotatef(90,1,0,0);
+    glRotatef(-rotation,0,1,0);
+    rotation = (rotation + 0.5);
+    if(rotation>360)
+                    rotation = 0;
+    glDisable(GL_TEXTURE_2D);  
+    glTranslatef(-300,275,500);
     //and map it
 //    glEnable(GL_TEXTURE_2D);
 //    gluSphere(quadricObj,1000.0, 20,20);
@@ -230,8 +244,8 @@ void myDisplay(void)
 	glRotatef(f_roll,0,1,0);
 	glRotatef(f_pitch,1,0,0);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[2]->sizeX, TextureImage[2]->sizeY, 
-		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[2]->data); 
+//	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[2]->sizeX, TextureImage[2]->sizeY, 
+//		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[2]->data); 
     
     //draw the fighter
 	drawFighter();
@@ -244,7 +258,7 @@ void myDisplay(void)
     
     //and the crosshair/aiming box    
     crosshair();
-    
+
     //reset the movement
     glRotatef(-f_pitch,1,0,0);
     glRotatef(-f_roll,0,1,0);
@@ -266,17 +280,26 @@ void myDisplay(void)
 * Fighter figure function
 */
 void drawFighter(void){
-    glColor3f(1,1,1);
-//    glRotatef(90,1,0,0);
-//    modelAPI.lit = false;
+//    glColor3f(1,1,1);
+if(draw3ds){
+    glRotatef(90,1,0,0);
+    modelAPI.lit = false;
 //    modelAPI.shownormals = true;
-//     modelAPI.Draw();
+     modelAPI.Draw();
 //     glDisable(GL_TEXTURE_2D);
 
            
-//     glRotatef(-90,1,0,0); 
+     glRotatef(-90,1,0,0); 
 //        glEnable(GL_TEXTURE_2D);
  
+   	glGenTextures(1, &myTexture); //generate one texture identified as myTexture
+   	glBindTexture(GL_TEXTURE_2D, myTexture); //tells which texture we will be working with.
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+}
+else{
      glBegin(GL_TRIANGLES);
 	
 	//left top
@@ -306,6 +329,7 @@ void drawFighter(void){
 	glEnd();
 //	glDisable(GL_TEXTURE_2D);
     }
+}
 
 //////////////////////////////////////////////////////
 /*Displays Second Window (Help Menu)*/
@@ -454,6 +478,9 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
          glutSetWindow(helpWindow);
          glutHideWindow();
          break;
+    case 'T':
+         draw3ds = !(draw3ds);
+         break;
     default:
             break;
     //redisplay the screen;
@@ -464,7 +491,7 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
 //////////////////////////////////////////////////////////////////////
 void bigText(char *s){
 	for (unsigned int i=0; i<strlen(s); i++)
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, s[i]);
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
 } 
 
 ////////////////////////////////////////////////////////////////////
@@ -686,20 +713,21 @@ void drawStars(){
 }
 
 void drawShot(){
-        	glBegin(GL_TRIANGLES);
-   	glColor3f(.9,.9,1);
-   	glVertex3f(-1, 0,-2.5);
-   	glVertex3f(-1.5,0.0, -20.0);
-    glVertex3f(-.75,0.0, -20.0);
+     glBegin(GL_TRIANGLES);
+   	 glColor3f(.9,.9,1);
+   	 glVertex3f(-1.0, 0,-2.5);
+   	 glVertex3f(-1.25,0.0, -20.0);
+     glVertex3f(-.75,0.0, -20.0);
 
-   	glColor3f(.9,.9,1);
-   	glVertex3f(1, 0.0,-2.5);
-   	glVertex3f(1.25,0.0, -20.0);
-    glVertex3f(0.75,0.0, -20.0);
-   // glVertex3f(1,-20.0,-20.0);
-    glEnd();
+//     glColor3f(.9,.9,1);
+   	 glVertex3f(1, 0.0,-2.5);
+ 	 glVertex3f(1.25,0.0, -20.0);
+     glVertex3f(0.75,0.0, -20.0);
+     // glVertex3f(1,-20.0,-20.0);
+     glEnd();
 
-     }
+}
+     
 void crosshair(){
      glEnable(GL_BLEND);
     glBegin(GL_QUADS);
