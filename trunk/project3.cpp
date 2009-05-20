@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     	
    	//load the images into memory
     TextureImage[0] = auxDIBImageLoad("space.bmp"); //load the image file
-   	TextureImage[1] = auxDIBImageLoad("splash.bmp"); //load the image file
+   	TextureImage[1] = auxDIBImageLoad("rock.bmp"); //load the image file
 //    TextureImage[2] = auxDIBImageLoad("ship.bmp"); //load the image file
     TextureImage[3] = auxDIBImageLoad("planet.bmp");
     //pixel storage mode (drawing options)
@@ -266,8 +266,8 @@ glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0);
     //time to draw stars
     updateStars();
     drawStars();
-    	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[3]->sizeX, TextureImage[3]->sizeY, 
-		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[3]->data); 
+    	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[1]->sizeX, TextureImage[1]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
 
     updateRocks();
     drawRocks();
@@ -307,11 +307,14 @@ glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0);
     glTranslatef(-f_x,-f_y,-f_z);
 	
 	//change the current texture
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
-		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
+/*    glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); */
     //and display the intro screen (if the intro is still about)
     //startScreen();
     drawScore();
+    
+    
+    checkSpace();
     
     //deflicker and re-display
     glutSwapBuffers();
@@ -744,13 +747,15 @@ void updateStars(){
              }
      }
 void drawStars(){
-     glBegin(GL_POINTS);
+     
      glColor3f(1,1,1);
      for(int i = 0; i < fieldSize; i++){
              glPointSize(field[i].getSize());
+             glBegin(GL_POINTS);
              glVertex3f(field[i].getx(),field[i].gety(),field[i].getz());
+             glEnd(); 
              }
-             glEnd();    
+                
 }
 
 void drawShot(){
@@ -792,6 +797,7 @@ void crosshair(){
 void drawRocks(){
      glColor3f(.7,.7,.2);
      for(int i = 0; i < numRocks; i++){
+             if(!rocks[i].isDestroyed()){
              glTranslatef(rocks[i].getX(),rocks[i].getY(),rocks[i].getZ());
              glRotatef(rocks[i].getRotation(),0,1,1);
              glEnable(GL_TEXTURE_2D);
@@ -799,7 +805,7 @@ void drawRocks(){
              glDisable(GL_TEXTURE_2D);
              glRotatef(-rocks[i].getRotation(),0,1,1);
              glTranslatef(-rocks[i].getX(),-rocks[i].getY(),-rocks[i].getZ());
-             
+             }
              }
      }
 void updateRocks(){
@@ -818,4 +824,11 @@ void drawScore(){
     
      glRasterPos3f(7,-7,3);
 	bigText("Score: ");
+}
+void checkSpace(){
+     for(int i = 0; i < numRocks; i++){
+             if(rocks[i].getZ()>-50.0f){
+                                        
+                                        }
+     }     
 }

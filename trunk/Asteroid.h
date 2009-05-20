@@ -18,12 +18,14 @@ class Asteroid{
     void updateZ(float change);
     float getSpeed();
     void updateRotation();
+    int isDestroyed();
   private:
     float x;
     float y;
     float z;
     float rotation;
     float speed;
+    int destroyed;
 };
 
 
@@ -94,6 +96,7 @@ void Asteroid::reset(void){
      this->z = -50.0f - rand()%50; 
      speed = 0.5;
      rotation = rand();
+     destroyed = 0;
 }
 void Asteroid::updateRotation(){
      this->rotation += 1;
@@ -107,4 +110,7 @@ void Asteroid::updateZ(float change){
 float Asteroid::getSpeed(){
       return this->speed;
       }
+int Asteroid::isDestroyed(){
+    return destroyed;
+}
 #endif
