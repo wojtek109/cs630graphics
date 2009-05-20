@@ -19,7 +19,7 @@
 #include <GL/glut.h>
 #include <cctype> //for bigText
 #include <windows.h>
-
+#include <sstream> //(for int->string conversion)
 
 #include "star.h"
 #include "Asteroid.h"
@@ -46,17 +46,23 @@ bool draw3ds = true;
 //screen mode
 bool fullscreen=0;
 
-//checking for intro screen
-bool intro = 1;
+//checking for intro screen/ quit screen
+int instructions = 1;
+int quitting = 0;
 
 //alpha effects for intro?
 int introAlpha = -1;
 
-//number of stars on screen
+//number of stars on screen and an array to hold them
 int fieldSize = 50;
-
-//starfield array
 star field[50];
+
+//number of Asteroids on the screen and an array to hold them
+int numRocks = 4;
+Asteroid rocks[4];
+
+int score = 0;
+
 /*
 * Fighter-specific variables. 
 * Position, Velocity and roll/pitch
@@ -92,8 +98,8 @@ int noRoll = 0;
 float pitchMax = 30.0f;
 float rollMax = 30.0f;
 
-float pitchSpeed = 2.1f;
-float rollSpeed =2.1f;
+float pitchSpeed = 1.9f;
+float rollSpeed =1.9f;
 
 float pitchLevel = 0.5f;
 float rollLevel = 0.6f;
@@ -113,7 +119,9 @@ float cameraDistance = 30.0f;
 float camerax = 0.0f;
 float cameraz = 0.0f;
 
+//planet (in the distance)rotation
 float rotation = 0;
+float rotationSpeed = 0.05f;
 
 /*
 * Function Declarations. In no particular order.
@@ -137,6 +145,9 @@ void pinFloor();
 void drawFighter();
 void updateStars();
 void drawStars();
+void drawRocks();
 void drawShot();
 void crosshair();
+void updateRocks();
+void drawScore();
 #endif

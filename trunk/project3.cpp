@@ -56,8 +56,11 @@ int main(int argc, char** argv)
     for(int i = 0; i < fieldSize; i++){
             field[i].reset();
     }
+    for(int i = 0; i < numRocks; i++){
+            rocks[i].reset();
+    }
     
-    // Help window starts here
+/*    // Help window starts here
     // smaller window (in 16:9 even)
     glutInitWindowSize(320,180);
     
@@ -78,12 +81,12 @@ int main(int argc, char** argv)
     
     //default view:hidden
     glutHideWindow();
-    
+*/    
     //show the main window as default
     glutSetWindow(mainWindow);
     
     //turn on 2-D textures (because we need them)
-    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
     
     //some settings about coordinate style
    	gluQuadricTexture(quadricObj, GLU_TRUE);
@@ -174,8 +177,6 @@ void mainKeyUp(unsigned char key, int pointx, int pointy){
 void myDisplay(void)
 { 
      
-	//clear the buffers
-    glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     /*testing 3rd person */
 //	   glMatrixMode (GL_PROJECTION);
 //   glLoadIdentity();
@@ -199,6 +200,42 @@ void myDisplay(void)
 */
    
    /*with this code*/
+   if(instructions){
+   glOrtho(-1,1,-1,1,1,-1);
+   glLoadIdentity();                    
+  	
+      //clear black background
+	glClearColor(0,0,0,0);
+	
+	glClear(GL_COLOR_BUFFER_BIT);
+		glDisable(GL_DEPTH_TEST);
+	//change draw color to white
+	glColor3f(1.0, 1.0,1.0); 
+	
+	//set draw position
+	glRasterPos2f(0, 2);
+	bigText("'i' to display this message");
+	
+	//a little lower for the next message
+	glRasterPos2f(0, 1);
+	bigText("'c' to close this window");
+
+	//and even lower for the last message
+	glRasterPos2f(0,0);
+	bigText("'q' to quit");
+
+	//execute commands
+	glutSwapBuffers();
+	glutPostRedisplay();
+	glEnable(GL_DEPTH_TEST);
+    }
+   else if(quitting){
+        }
+   else{
+glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0); 
+   gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
+	//clear the buffers
+    glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
    glMatrixMode (GL_MODELVIEW);  
 	
@@ -216,7 +253,7 @@ void myDisplay(void)
     gluSphere(quadricObj,200,200,200);
     glRotatef(90,1,0,0);
     glRotatef(-rotation,0,1,0);
-    rotation = (rotation + 0.5);
+    rotation += rotationSpeed;
     if(rotation>360)
                     rotation = 0;
     glDisable(GL_TEXTURE_2D);  
@@ -229,6 +266,11 @@ void myDisplay(void)
     //time to draw stars
     updateStars();
     drawStars();
+    	glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[3]->sizeX, TextureImage[3]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[3]->data); 
+
+    updateRocks();
+    drawRocks();
     
 //	pinFloor();
 //    pinBackgroundTexture();
@@ -268,13 +310,14 @@ void myDisplay(void)
     glTexImage2D(GL_TEXTURE_2D, 0, 3, 512, 512, 
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
     //and display the intro screen (if the intro is still about)
-    startScreen();
+    //startScreen();
+    drawScore();
     
     //deflicker and re-display
     glutSwapBuffers();
     glutPostRedisplay();
 }
-
+}
 
 /*
 * Fighter figure function
@@ -393,7 +436,7 @@ void checkFullscreen(void)
   }
   else
   {
-    glutReshapeWindow(500,500);
+    glutReshapeWindow(800,600);
     glutPositionWindow(50,50);
     fullscreen=0;
   }
@@ -468,15 +511,13 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
 		  exit(0);
 		  break;
     case 'I':
-         glutSetWindow(helpWindow);
-         glutShowWindow();
+         instructions = 1;
          break;
     case 'F':
          checkFullscreen();
          break;
     case 'C':
-         glutSetWindow(helpWindow);
-         glutHideWindow();
+         instructions = 0;    
          break;
     case 'T':
          draw3ds = !(draw3ds);
@@ -553,7 +594,7 @@ void pinFloor(){
         glEnd();
         glDisable(GL_TEXTURE_2D);
      }
-void startScreen(){
+/*void startScreen(){
      if(intro){
                introAlpha --;
                pinIntro();
@@ -602,7 +643,7 @@ void pinIntro(){
 	//display it all
 	glutSwapBuffers();
 	glutPostRedisplay();
-     }
+     }*/
 
 
 //timer for good measure. 30 frames a second. Kind of heavy
@@ -716,13 +757,13 @@ void drawShot(){
      glBegin(GL_TRIANGLES);
    	 glColor3f(.9,.9,1);
    	 glVertex3f(-1.0, 0,-2.5);
-   	 glVertex3f(-1.25,0.0, -20.0);
-     glVertex3f(-.75,0.0, -20.0);
+   	 glVertex3f(-1.25,0.0, -50.00);
+     glVertex3f(-.75,0.0, -50.00);
 
 //     glColor3f(.9,.9,1);
    	 glVertex3f(1, 0.0,-2.5);
- 	 glVertex3f(1.25,0.0, -20.0);
-     glVertex3f(0.75,0.0, -20.0);
+ 	 glVertex3f(1.25,0.0, -50.00);
+     glVertex3f(0.75,0.0, -50.00);
      // glVertex3f(1,-20.0,-20.0);
      glEnd();
 
@@ -732,19 +773,49 @@ void crosshair(){
      glEnable(GL_BLEND);
     glBegin(GL_QUADS);
     glColor4f(0.0f,1.0f,0.0f,0.40f);
-    glVertex3f(-1.5,1.5,-20);
-    glVertex3f(-1.5,-1.5,-20);
-    glVertex3f(1.5,-1.5,-20);
-    glVertex3f(1.5,1.5,-20);
+    glVertex3f(-1.5,1.5,-50);
+    glVertex3f(-1.5,-1.5,-50);
+    glVertex3f(1.5,-1.5,-50);
+    glVertex3f(1.5,1.5,-50);
     glEnd();
     glLineWidth(2.0f);
     glColor4f(0.0f,1.0f,0.0f,1.0f);
     glBegin(GL_LINES);
-    glVertex3f(0.0f, 1.0f, -19.8f);
-    glVertex3f(0.0f, -1.0f, -19.8f);
-    glVertex3f(-1.0f,0.0f,-19.8f);
-    glVertex3f(1.0f,0.0f,-19.8f);
+    glVertex3f(0.0f, 1.0f, -45.8f);
+    glVertex3f(0.0f, -1.0f, -45.8f);
+    glVertex3f(-1.0f,0.0f,-45.8f);
+    glVertex3f(1.0f,0.0f,-45.8f);
     glEnd();
     
     glDisable(GL_BLEND);
+}
+void drawRocks(){
+     glColor3f(.7,.7,.2);
+     for(int i = 0; i < numRocks; i++){
+             glTranslatef(rocks[i].getX(),rocks[i].getY(),rocks[i].getZ());
+             glRotatef(rocks[i].getRotation(),0,1,1);
+             glEnable(GL_TEXTURE_2D);
+             gluSphere(quadricObj,1,20,20);
+             glDisable(GL_TEXTURE_2D);
+             glRotatef(-rocks[i].getRotation(),0,1,1);
+             glTranslatef(-rocks[i].getX(),-rocks[i].getY(),-rocks[i].getZ());
+             
+             }
+     }
+void updateRocks(){
+     for(int i = 0; i < numRocks; i++){
+             rocks[i].updateRotation();
+             rocks[i].updateZ(rocks[i].getSpeed());
+             
+             if(rocks[i].getZ() > 10){
+                                    rocks[i].reset();
+                                    }
+             }
+     }
+void drawScore(){
+     
+     glColor3f(1,1,1);
+    
+     glRasterPos3f(7,-7,3);
+	bigText("Score: ");
 }
