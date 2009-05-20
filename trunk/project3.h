@@ -22,13 +22,10 @@
 
 
 #include "star.h"
+#include "Asteroid.h"
 
-
-
-
-
-#include "GLTexture.cpp"
 #include "Model_3DS.cpp"
+#include "GLTexture.cpp"
 
 /*
 * Globals. I hate globals. But you have to use them I guess
@@ -39,6 +36,7 @@ GLuint myTexture;  //the texture variable
 GLUquadricObj *quadricObj = gluNewQuadric(); 
 AUX_RGBImageRec *TextureImage[4];	//setup a  pointer to the texture
 Model_3DS modelAPI;
+bool draw3ds = true;
 
 
 /*
@@ -52,7 +50,7 @@ bool fullscreen=0;
 bool intro = 1;
 
 //alpha effects for intro?
-int introAlpha = 100;
+int introAlpha = -1;
 
 //number of stars on screen
 int fieldSize = 50;
@@ -101,10 +99,10 @@ float pitchLevel = 0.5f;
 float rollLevel = 0.6f;
 
 float ymin = -10.0f;
-float ymax = 3.0f;
+float ymax = 7.0f;
 
-float xmax = 3.0f;
-float xmin = -3.0f;
+float xmax = 6.0f;
+float xmin = -6.0f;
 
 float vel_x = 0.25f;
 float vel_y = 0.25f;
@@ -114,6 +112,8 @@ float cameraDistance = 30.0f;
 
 float camerax = 0.0f;
 float cameraz = 0.0f;
+
+float rotation = 0;
 
 /*
 * Function Declarations. In no particular order.
