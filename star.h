@@ -10,7 +10,6 @@ private:
       float y;
       float z;
       float size;
-      float speed;
 public:
       star(void);
       ~star(void);
@@ -23,7 +22,6 @@ public:
       float getz(void);
       float getSize(void );
       void reset(void);
-      float getSpeed();
             
       void operator=(star s);             
 };
@@ -57,8 +55,8 @@ void star::reset(){
      x = (rand()%20)-10;
      y = (rand()%20)-10;
      z = -20.0f - (rand()%50); 
-     size = (rand()%5)+10.0f; 
-     speed = (rand()%10);
+     size = fabs((rand()%2))+1; 
+
      }
 void star::operator=(star s){
      this->x = s.getx();
@@ -73,7 +71,4 @@ float star::getSize(void){
 }
 star::~star(void){
 }
-float star::getSpeed(){
-                 return this->speed;
-                 }
 #endif

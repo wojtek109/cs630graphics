@@ -135,7 +135,7 @@ void checkFullscreen(void);
 void bigText(char *s);
 void pinBackgroundTexture(void);
 void myInit(void);
-void startScreen(void);
+//void startScreen(void);
 void pinIntro(void);
 void myTime(int time);
 void figureFighter(void);
@@ -150,4 +150,5 @@ void drawShot();
 void crosshair();
 void updateRocks();
 void drawScore();
+void checkSpace();
 #endif
