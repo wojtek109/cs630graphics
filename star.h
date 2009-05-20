@@ -12,6 +12,7 @@ private:
       float size;
 public:
       star(void);
+      ~star(void);
       void updatex(float upd);
       void updatey(float upd);
       void updatez(float upd);
@@ -21,7 +22,7 @@ public:
       float getz(void);
       float getSize(void );
       void reset(void);
-      
+            
       void operator=(star s);             
 };
       
@@ -66,5 +67,7 @@ void star::setSize(float sNew){
 }
 float star::getSize(void){
      return this->size;
+}
+star::~star(void){
 }
 #endif

@@ -1,5 +1,6 @@
 //including the 
 #include "project3.h"
+//#include "Asteroid.cpp"
 
 /* 
 * Main loop.

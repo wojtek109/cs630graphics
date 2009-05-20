@@ -19,7 +19,13 @@
 #include <GL/glut.h>
 #include <cctype> //for bigText
 #include <windows.h>
+
+
 #include "star.h"
+
+
+
+
 
 #include "GLTexture.cpp"
 #include "Model_3DS.cpp"
