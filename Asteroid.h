@@ -14,11 +14,12 @@ class Asteroid{
     float getZ(void);
     void setRotation(float newRotation);
     float getRotation(void);
-    void reset(void);
+    void reset(int mode);
     void updateZ(float change);
     float getSpeed();
     void updateRotation();
     int isDestroyed();
+    void destroy();
   private:
     float x;
     float y;
@@ -90,13 +91,23 @@ float Asteroid::getRotation(void)
 {
                        return rotation;                       
 }
-void Asteroid::reset(void){
-     this->x = (rand()%10)-5;
-     this->y = (rand()%10)-5;
+void Asteroid::reset(int mode){
+     if(mode){
+     this->x = 0.0f;
+     this->y = 0.0f;
      this->z = -50.0f - rand()%50; 
      speed = 0.5;
      rotation = rand();
      destroyed = 0;
+     }
+     else{
+     this->x = fabs((rand()%10))-5;
+     this->y = fabs((rand()%10))-5;
+     this->z = -50.0f - rand()%50; 
+     speed = 0.5;
+     rotation = rand();
+     destroyed = 0;
+          }
 }
 void Asteroid::updateRotation(){
      this->rotation += 1;
@@ -113,4 +124,7 @@ float Asteroid::getSpeed(){
 int Asteroid::isDestroyed(){
     return destroyed;
 }
+void Asteroid::destroy(){
+     destroyed = 1;
+     }
 #endif

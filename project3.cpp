@@ -44,7 +44,8 @@ int main(int argc, char** argv)
     //adding members to the menu
     glutAddMenuEntry("Instructions",1);
     glutAddMenuEntry("Toggle Fullscreen",2);
-    glutAddMenuEntry("Quit",3);
+    glutAddMenuEntry("Quality",3);
+    glutAddMenuEntry("Quit",4);
     
     //load the fighter
     modelAPI.Load("fighter.3ds");
@@ -57,7 +58,7 @@ int main(int argc, char** argv)
             field[i].reset();
     }
     for(int i = 0; i < numRocks; i++){
-            rocks[i].reset();
+            rocks[i].reset(mode);
     }
     
 /*    // Help window starts here
@@ -204,32 +205,62 @@ void myDisplay(void)
    glOrtho(-1,1,-1,1,1,-1);
    glLoadIdentity();                    
   	
-      //clear black background
-	glClearColor(0,0,0,0);
-	
-	glClear(GL_COLOR_BUFFER_BIT);
-		glDisable(GL_DEPTH_TEST);
-	//change draw color to white
+   //clear black background
+   glClearColor(0,0,0,0);
+   glClear(GL_COLOR_BUFFER_BIT);
+   glDisable(GL_DEPTH_TEST);
+   updateIntro();
+   
+   glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[1]->sizeX, TextureImage[1]->sizeY, 
+   0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); 
+		
+	glTranslatef(-10,7,0);
+	glEnable(GL_TEXTURE_2D);
+    glRotatef(introRotation,0,1,0);
+    gluSphere(quadricObj,3,20,20);
+    glRotatef(-introRotation,0,1,0);
+    glDisable(GL_TEXTURE_2D);
+	glTranslatef(10,-7,0);
+    glColor3f(0,0,.4);
+    glBegin(GL_QUADS);
+    glVertex2f(-6,9);
+    glVertex2f(7,8.5);
+    glVertex2f(7,-7);
+    glVertex2f(-7,-5);
+    glEnd();
+    //set draw position and
+   //change draw color to white
 	glColor3f(1.0, 1.0,1.0); 
-	
-	//set draw position
-	glRasterPos2f(0, 2);
-	bigText("'i' to display this message");
-	
-	//a little lower for the next message
-	glRasterPos2f(0, 1);
-	bigText("'c' to close this window");
-
-	//and even lower for the last message
-	glRasterPos2f(0,0);
-	bigText("'q' to quit");
-
+    glRasterPos2f(-2, 8);
+	bigText("Space! (The game... that we lost)");
+    glRasterPos2f(-1, 7);
+	bigText("Controls:");
+    glRasterPos2f(-5, 5);
+	bigText("w,s,a,d - Move");
+    glRasterPos2f(-5,4);
+	bigText("Spacebar - Shoot");
+    glRasterPos2f(-5,3);
+	bigText("t - toggle 'quality'");
+    glRasterPos2f(-5, 2);
+	bigText("i - display this message");
+    glRasterPos2f(-5, 1);
+	bigText("c - close this screen");
+    glRasterPos2f(-5, 0);
+	bigText("m - toggle asteroid randomization");
+    glRasterPos2f(-5, -1);
+	bigText("p - pause");
+    glRasterPos2f(-5, -2);
+	bigText("q - quit/credits");
+   glFlush();
 	//execute commands
 	glutSwapBuffers();
 	glutPostRedisplay();
 	glEnable(GL_DEPTH_TEST);
     }
-   else if(quitting){
+    else if(quitting){
+         exit(0);
+         }
+   else if(pause){
         }
    else{
 glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0); 
@@ -295,7 +326,6 @@ glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0);
 	//draw the shot
    	if(shoot){
     drawShot();
-    shoot = 0;
     }
     
     //and the crosshair/aiming box    
@@ -315,6 +345,7 @@ glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0);
     
     
     checkSpace();
+    shoot = 0;
     
     //deflicker and re-display
     glutSwapBuffers();
@@ -453,13 +484,15 @@ void myMenu(int id)
 	switch(id)
 	{
 	case 1:
-		glutSetWindow(helpWindow);
-		glutShowWindow();
+		instructions = 1;
 		break;
 	case 2: 
 		checkFullscreen();
 		break;
-	case 3: 
+	case 3:
+         draw3ds = !(draw3ds);
+         break;
+	case 4: 
 		exit(0);
 		break;
 	default:
@@ -472,7 +505,7 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
 //OGL sends us the key character and where on the screen it was pressed.
 {
   key = toupper(key);
-  
+  if(!instructions){
   //check for keypress (switch doesn't take non-statics)
   if(key == up){
          f_vel_y = vel_y;
@@ -507,11 +540,13 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
                     PlaySound(TEXT("15.wav"),NULL,SND_ASYNC);
                 shoot = 1;
                 }
+                }
   //check statics
 	switch(key)
 	{
     case 'Q':
-		  exit(0);
+         instructions = 0;
+		  quitting = 1;
 		  break;
     case 'I':
          instructions = 1;
@@ -524,6 +559,12 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
          break;
     case 'T':
          draw3ds = !(draw3ds);
+         break;
+    case 'M':
+         mode = !(mode);
+         break;
+    case 'P':
+         pause = !(pause);
          break;
     default:
             break;
@@ -797,7 +838,7 @@ void crosshair(){
 void drawRocks(){
      glColor3f(.7,.7,.2);
      for(int i = 0; i < numRocks; i++){
-             if(!rocks[i].isDestroyed()){
+             if(!(rocks[i].isDestroyed())){
              glTranslatef(rocks[i].getX(),rocks[i].getY(),rocks[i].getZ());
              glRotatef(rocks[i].getRotation(),0,1,1);
              glEnable(GL_TEXTURE_2D);
@@ -814,7 +855,7 @@ void updateRocks(){
              rocks[i].updateZ(rocks[i].getSpeed());
              
              if(rocks[i].getZ() > 10){
-                                    rocks[i].reset();
+                                    rocks[i].reset(mode);
                                     }
              }
      }
@@ -826,9 +867,64 @@ void drawScore(){
 	bigText("Score: ");
 }
 void checkSpace(){
+     if(shoot){
+               float x = f_x;
+               float y = f_y;
+               float z = f_z;
+     for(int r = 0; r <  1000; r++){
+             x = x - .1*sin(f_roll*(pi/180));
+             y = y + .1*sin(f_pitch*(pi/180));
+             z = z - .1*cos(f_roll*(pi/180))*cos(f_pitch*(pi/180));
+             glPointSize(5);
+             glBegin(GL_POINTS);
+             glColor3f(0,1,0);
+             glVertex3f(x,y,z);
+             glEnd();
+             
      for(int i = 0; i < numRocks; i++){
-             if(rocks[i].getZ()>-50.0f){
-                                        
-                                        }
-     }     
+             if(!(rocks[i].isDestroyed()))
+             {
+             //finding maxes
+             cxmax = rocks[i].getX()+2.0f;
+             cymax = rocks[i].getY()+2.0f;
+             czmax = rocks[i].getZ()+2.0f;
+             //finding mins
+             cxmin = rocks[i].getX()-2.0f;
+             cymin = rocks[i].getY()-2.0f;
+             czmin = rocks[i].getZ()-2.0f;
+             if(
+             (cxmin<x<cxmax)
+             && 
+             (cymin<y<cymax) 
+             && 
+             (czmin<z<czmax)){
+                              rocks[i].destroy();
+                              score +=1;
+             }
+             }
+             }     
+             }
+     }
+     for(int j = 0; j < numRocks; j++){
+             //finding max values for box
+             cxmax = rocks[j].getX()+1.0f;
+             cymax = rocks[j].getY()+1.0f;
+             czmax = rocks[j].getZ()+1.0f;
+             //finding mins
+             cxmin = rocks[j].getX()-1.0f;
+             cymin = rocks[j].getY()-1.0f;
+             czmin = rocks[j].getZ()-1.0f;
+             if(
+             (cxmin<f_x<cxmax)
+             && 
+             (cymin<f_y<cymax) 
+             && 
+             (czmin<f_z<czmax)){
+             quitting=1;
+             }
+     }
 }
+void updateIntro(){
+     introRotation += 0.5f;
+     }
+

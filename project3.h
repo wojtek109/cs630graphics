@@ -37,11 +37,13 @@ GLUquadricObj *quadricObj = gluNewQuadric();
 AUX_RGBImageRec *TextureImage[4];	//setup a  pointer to the texture
 Model_3DS modelAPI;
 bool draw3ds = true;
-
+float introRotation = 0;
 
 /*
 * Environment variables
 */
+float pi=acos(-1);
+
 
 //screen mode
 bool fullscreen=0;
@@ -62,6 +64,8 @@ int numRocks = 4;
 Asteroid rocks[4];
 
 int score = 0;
+int pause = 0;
+int mode = 0;
 
 /*
 * Fighter-specific variables. 
@@ -73,6 +77,15 @@ float f_vel_x, f_vel_y = 0.0 ;
 float f_roll, f_pitch = 0;
 float speed = 1.0f;
 
+/*
+* Collision Detection stuff
+*/
+             float cxmax;
+             float cymax;
+             float czmax;
+             float cxmin;
+             float cymin;
+             float czmin;
 
 /*
 * The following lines included to complement re-mapping of keys
@@ -151,4 +164,5 @@ void crosshair();
 void updateRocks();
 void drawScore();
 void checkSpace();
+void updateIntro();
 #endif

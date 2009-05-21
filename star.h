@@ -52,9 +52,9 @@ float star::getz(void){
 }
 
 void star::reset(){
-     x = (rand()%20)-10;
-     y = (rand()%20)-10;
-     z = -20.0f - (rand()%50); 
+     x = fabs((rand()%20))-10;
+     y = fabs((rand()%20))-10;
+     z = -20.0f - fabs((rand()%50)); 
      size = fabs((rand()%2))+1; 
 
      }
