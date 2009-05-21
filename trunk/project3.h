@@ -29,37 +29,43 @@
 #include "star.h" //for a starfield
 #include "Asteroid.h" //for asteroids
 
-#include "Model_3DS.cpp"
-#include "GLTexture.cpp"
+#include "Model_3DS.cpp"//to import figures
+#include "GLTexture.cpp" //alternative texture mapper
 
 /*
 * Globals. I hate globals. But you have to use them I guess
 */
-GLint main_menu;
-GLint mainWindow, helpWindow;
+GLint main_menu; //glut menu variable
+GLint mainWindow; //main window (obviously)
 GLuint myTexture;  //the texture variable
-GLUquadricObj *quadricObj = gluNewQuadric(); 
+GLUquadricObj *quadricObj = gluNewQuadric(); //quadric for object creation 
 AUX_RGBImageRec *TextureImage[5];	//setup a  pointer to the texture
-Model_3DS modelAPI;
-bool draw3ds = true;
-float introRotation = 0;
+Model_3DS modelAPI; //3ds interface object
+
+//a nice pi to eat... I mean use. better than typing 3.1415926535...
+float pi=acos(-1);
+
 
 /*
 * Environment variables
 */
-float pi=acos(-1);
 
-bool sound = 1;   //sound on?
+//draw the 3ds model?
+bool draw3ds = true;
 
-//screen mode
+//rotation for the little asteroid in the instruction screen
+float introRotation = 0;
+
+//sound on?
+bool sound = 1;   
+
+//fullscreen on?
 bool fullscreen=0;
 
 //checking for intro screen/ quit screen
 int instructions = 1;
 int quitting = 0;
-
-//alpha effects for intro?
-int introAlpha = -1;
+int quitStart = 1;
 
 //number of stars on screen and an array to hold them
 int fieldSize = 50;
@@ -69,9 +75,14 @@ star field[50];
 int numRocks = 4;
 Asteroid rocks[4];
 
+//more variables. self-explanitory
 int score = 0;
-int pause = 0;
-int mode = 0;
+int pause = 0; // 1 = paused
+int mode = 0; //1 = no random rock-gen
+
+//are we shooting?
+int shoot = 0;
+
 
 /*
 * Fighter-specific variables. 
@@ -85,14 +96,14 @@ float f_roll, f_pitch = 0;
 float speed = 1.0f;
 
 /*
-* Collision Detection stuff
+* Collision Detection stuff (dynamic bounding box generation)
 */
-             float cxmax;
-             float cymax;
-             float czmax;
-             float cxmin;
-             float cymin;
-             float czmin;
+float cxmax;
+float cymax;
+float czmax;
+float cxmin;
+float cymin;
+float czmin;
 
 /*
 * The following lines included to complement re-mapping of keys
@@ -103,65 +114,72 @@ int left = 'A';
 int right = 'D';
 int fire = ' ';
 
-int shoot = 0;
 
 /*
 * Movement-specific variables
 */
 int goingUp = 0;
 int goingDown = 0;
-int levelling = 0;
+int levelling = 0; // all of these are actually bools
 int goingLeft = 0;
 int goingRight = 0;
 int noRoll = 0;
 
+/*
+* boundary conditions for angles
+*/
 float pitchMax = 30.0f;
 float rollMax = 30.0f;
 
+/*
+* angular velocity
+*/
 float pitchSpeed = 1.9f;
 float rollSpeed =1.9f;
 
+/*
+* angular velocity with no input
+*/
 float pitchLevel = 0.5f;
 float rollLevel = 0.6f;
 
+/*
+* boundary conditionsfor movement
+*/
 float ymin = -10.0f;
 float ymax = 7.0f;
 
 float xmax = 6.0f;
 float xmin = -6.0f;
 
+/*
+* Movement speeds
+*/
+
 float vel_x = 0.25f;
 float vel_y = 0.25f;
 
-//how far we want to view from
-float cameraDistance = 30.0f;
 
-float camerax = 0.0f;
-float cameraz = 0.0f;
-
-//planet (in the distance)rotation
+//planet (in the distance)rotation and speed
 float rotation = 0;
 float rotationSpeed = 0.05f;
+
+//scroll counter for the end
+float endHeight = -10;
 
 /*
 * Function Declarations. In no particular order.
 */
 void myDisplay(void);
-void helpDisplay(void);
 void myReshape(int w, int h);
 void myKeyboard(unsigned char key, int pointx, int pointy);
 void myMenu(int id);
 void checkFullscreen(void);
 void bigText(char *s);
-void pinBackgroundTexture(void);
 void myInit(void);
-//void startScreen(void);
-void pinIntro(void);
 void myTime(int time);
 void figureFighter(void);
-void loadImages(void);
 void mainKeyUp(unsigned char key, int pointx, int pointy);
-void pinFloor();
 void drawFighter();
 void updateStars();
 void drawStars();
