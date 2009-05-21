@@ -1,7 +1,7 @@
 #ifndef PROJECT3_H
 #define PROJECT3_H
 /****************************************************************************
-*  Space Flight Demo
+*  Space Flight Shooter
 *  Authors:
 *          Alex Bonilla
 *          Ramil Nobleza
@@ -9,6 +9,11 @@
 *  Description: This demo will feature a controllable spaceship
 *  which will fly through space through a path through asteroids
 *  and other objects. Shooting (hopefully) will be implemented soon.
+*
+*
+*
+*  Edit: Shooting works. Flying works. have a nice backdrop of a spinning planet.
+*
 *
 ******************************************************************************/
 
@@ -21,8 +26,8 @@
 #include <windows.h>
 #include <sstream> //(for int->string conversion)
 
-#include "star.h"
-#include "Asteroid.h"
+#include "star.h" //for a starfield
+#include "Asteroid.h" //for asteroids
 
 #include "Model_3DS.cpp"
 #include "GLTexture.cpp"
@@ -34,7 +39,7 @@ GLint main_menu;
 GLint mainWindow, helpWindow;
 GLuint myTexture;  //the texture variable
 GLUquadricObj *quadricObj = gluNewQuadric(); 
-AUX_RGBImageRec *TextureImage[4];	//setup a  pointer to the texture
+AUX_RGBImageRec *TextureImage[5];	//setup a  pointer to the texture
 Model_3DS modelAPI;
 bool draw3ds = true;
 float introRotation = 0;
@@ -44,6 +49,7 @@ float introRotation = 0;
 */
 float pi=acos(-1);
 
+bool sound = 1;   //sound on?
 
 //screen mode
 bool fullscreen=0;
@@ -73,7 +79,8 @@ int mode = 0;
 */
 float f_x, f_y = 0;
 float f_z = -1;
-float f_vel_x, f_vel_y = 0.0 ;
+float f_vel_x = 0.0f;
+float f_vel_y = 0.0f;
 float f_roll, f_pitch = 0;
 float speed = 1.0f;
 
@@ -162,7 +169,6 @@ void drawRocks();
 void drawShot();
 void crosshair();
 void updateRocks();
-void drawScore();
 void checkSpace();
 void updateIntro();
 #endif

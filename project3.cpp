@@ -93,10 +93,11 @@ int main(int argc, char** argv)
    	gluQuadricTexture(quadricObj, GLU_TRUE);
     	
    	//load the images into memory
-    TextureImage[0] = auxDIBImageLoad("space.bmp"); //load the image file
+    TextureImage[0] = auxDIBImageLoad("sy.bmp"); //load the image file
    	TextureImage[1] = auxDIBImageLoad("rock.bmp"); //load the image file
-//    TextureImage[2] = auxDIBImageLoad("ship.bmp"); //load the image file
+    TextureImage[2] = auxDIBImageLoad("aj.bmp"); //load the image file
     TextureImage[3] = auxDIBImageLoad("planet.bmp");
+    TextureImage[4] = auxDIBImageLoad("rn.bmp");
     //pixel storage mode (drawing options)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -177,7 +178,6 @@ void mainKeyUp(unsigned char key, int pointx, int pointy){
 /*Main Window Display*/
 void myDisplay(void)
 { 
-     
     /*testing 3rd person */
 //	   glMatrixMode (GL_PROJECTION);
 //   glLoadIdentity();
@@ -246,7 +246,7 @@ void myDisplay(void)
     glRasterPos2f(-5, 1);
 	bigText("c - close this screen");
     glRasterPos2f(-5, 0);
-	bigText("m - toggle asteroid randomization");
+	bigText("n - sound (because s is for moving)");
     glRasterPos2f(-5, -1);
 	bigText("p - pause");
     glRasterPos2f(-5, -2);
@@ -258,6 +258,138 @@ void myDisplay(void)
 	glEnable(GL_DEPTH_TEST);
     }
     else if(quitting){
+         PlaySound(TEXT("exp.wav"),NULL,SND_ASYNC);
+            glOrtho(-1,1,-1,1,1,-1);
+   glLoadIdentity();                    
+  	
+   //clear black background
+   glClearColor(0,0,0,0);
+   glClear(GL_COLOR_BUFFER_BIT);
+   glDisable(GL_DEPTH_TEST);
+   glColor3f(1,0,0);
+   glRasterPos2f(-2,8);
+   bigText("GAME OVER");
+   glColor3f(1,1,1);
+   glRasterPos2f(-3,7);
+   bigText("Yeah yeah yeah, you lost it");
+   glRasterPos2f(-2,6);
+   bigText("Oh, your score:");
+   glRasterPos2f(-1,5);
+   char sscore[20];
+   itoa(score,sscore,10);
+   bigText(sscore);
+   
+   glRasterPos2f(-3,4);
+   bigText("This software brought to you by:");
+   glRasterPos2f(-9,2);
+   bigText("This guy ^");
+   glRasterPos2f(-9,1);
+   bigText("Sunchol Yoo - xionwardz@gmail.com");
+   glRasterPos2f(0,0);
+   bigText("This guy >");
+   glRasterPos2f(0,-1);
+   bigText("Alex Bonilla - ajbonill@sfsu.edu");
+   glRasterPos2f(-9,-2);
+   bigText("and this one");
+   glRasterPos2f(-9,-3);
+   bigText("Ramil Nobleza - rome.mil@gmail.com www.odddiscoveries.com");
+glColor3f(1,1,1);
+
+glBegin(GL_QUADS);
+glVertex2f(-8.25,5.25);
+glVertex2f(-4.75,5.25);
+glVertex2f(-4.75,9.25);
+glVertex2f(-8.25,9.25);
+glEnd();
+   glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[0]->sizeX, TextureImage[0]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[0]->data);
+		glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+
+glTexCoord2f(0.0f, 0.0f); 
+		glVertex2f(-8,5.5);
+		
+glTexCoord2f(1.0f, 0.0f); 
+
+		glVertex2f(-5,5.5);
+		
+glTexCoord2f(1.0f, 1.0f); 
+
+		glVertex2f(-5,9);
+glTexCoord2f(0.0f, 1.0f); 
+		glVertex2f(-8,9);
+
+		
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+
+
+glColor3f(1,1,1);
+
+glBegin(GL_QUADS);
+glVertex2f(8.25,0.75);
+glVertex2f(4.75,0.75);
+glVertex2f(4.75,5.25);
+glVertex2f(8.25,5.25);
+glEnd();
+   glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[2]->sizeX, TextureImage[2]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[2]->data);
+		glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+
+glTexCoord2f(1.0f, 0.0f); 
+		glVertex2f(8,1);
+		
+glTexCoord2f(0.0f, 0.0f); 
+
+		glVertex2f(5,1);
+		
+glTexCoord2f(0.0f, 1.0f); 
+
+		glVertex2f(5,5);
+		
+glTexCoord2f(01.0f, 01.0f); 
+		glVertex2f(8,5);
+
+		
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+
+
+
+
+glColor3f(1,1,1);
+
+glBegin(GL_QUADS);
+glVertex2f(-8.25,-4.75);
+glVertex2f(-4.75,-4.75);
+glVertex2f(-4.75,-9.25);
+glVertex2f(-8.25,-9.25);
+glEnd();
+   glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[4]->sizeX, TextureImage[4]->sizeY, 
+		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[4]->data);
+		glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+
+glTexCoord2f(0.0f, 1.0f); 
+		glVertex2f(-8,-5);
+glTexCoord2f(1.0f, 1.0f); 
+
+		glVertex2f(-5,-5);
+glTexCoord2f(1.0f, 0.0f); 
+
+		glVertex2f(-5,-9);
+glTexCoord2f(0.0f, 0.0f); 
+		glVertex2f(-8,-9);
+
+		
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+	glutSwapBuffers();
+	glutPostRedisplay();
+	
+    Sleep(10000);
+
          exit(0);
          }
    else if(pause){
@@ -341,7 +473,6 @@ glFrustum (-1.0, 1.0, -1.0, 1.0, 2, 1000.0);
 		0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[1]->data); */
     //and display the intro screen (if the intro is still about)
     //startScreen();
-    drawScore();
     
     
     checkSpace();
@@ -537,7 +668,9 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
            noRoll = 0;
          }
          if(key == fire){
+                if(sound){
                     PlaySound(TEXT("15.wav"),NULL,SND_ASYNC);
+                    }
                 shoot = 1;
                 }
                 }
@@ -565,6 +698,9 @@ void myKeyboard(unsigned char key, int pointx, int pointy)  // keyboard callback
          break;
     case 'P':
          pause = !(pause);
+         break;
+    case 'N':
+         sound = !(sound);
          break;
     default:
             break;
@@ -859,70 +995,67 @@ void updateRocks(){
                                     }
              }
      }
-void drawScore(){
-     
-     glColor3f(1,1,1);
-    
-     glRasterPos3f(7,-7,3);
-	bigText("Score: ");
-}
+
 void checkSpace(){
      if(shoot){
                float x = f_x;
                float y = f_y;
                float z = f_z;
-     for(int r = 0; r <  1000; r++){
-             x = x - .1*sin(f_roll*(pi/180));
-             y = y + .1*sin(f_pitch*(pi/180));
-             z = z - .1*cos(f_roll*(pi/180))*cos(f_pitch*(pi/180));
-             glPointSize(5);
+     for(int r = 0; r < 10000 ; r++){
+             x = x - .01*sin(f_roll*(pi/180));
+             y = y + .01*sin(f_pitch*(pi/180));
+             z = z - .01*cos(f_roll*(pi/180))*cos(f_pitch*(pi/180));
+/*             glPointSize(5);
              glBegin(GL_POINTS);
              glColor3f(0,1,0);
              glVertex3f(x,y,z);
              glEnd();
-             
+             */
      for(int i = 0; i < numRocks; i++){
              if(!(rocks[i].isDestroyed()))
              {
              //finding maxes
-             cxmax = rocks[i].getX()+2.0f;
-             cymax = rocks[i].getY()+2.0f;
-             czmax = rocks[i].getZ()+2.0f;
+             cxmax = (rocks[i].getX())+3.0f;
+             cymax = (rocks[i].getY())+3.0f;
+             czmax = (rocks[i].getZ())+3.0f;
              //finding mins
-             cxmin = rocks[i].getX()-2.0f;
-             cymin = rocks[i].getY()-2.0f;
-             czmin = rocks[i].getZ()-2.0f;
+             cxmin = (rocks[i].getX())-3.0f;
+             cymin = (rocks[i].getY())-3.0f;
+             czmin = (rocks[i].getZ())-3.0f;
              if(
-             (cxmin<x<cxmax)
+             ((cxmin < x) && (x < cxmax))
+             &&  
+             ((cymin < y) && (y < cymax))
              && 
-             (cymin<y<cymax) 
-             && 
-             (czmin<z<czmax)){
+             ((czmin < z) && (z < czmax))){
                               rocks[i].destroy();
                               score +=1;
-             }
-             }
-             }     
-             }
-     }
+                              } //end destroying
+             } //end if rocks exist
+     } //end rock loop
+     } //end shot check loop
+     } //end if(shot)
      for(int j = 0; j < numRocks; j++){
+             if(!(rocks[j].isDestroyed())){
+             
              //finding max values for box
-             cxmax = rocks[j].getX()+1.0f;
-             cymax = rocks[j].getY()+1.0f;
-             czmax = rocks[j].getZ()+1.0f;
+             cxmax = rocks[j].getX()+3.0f;
+             cymax = rocks[j].getY()+1.3f;
+             czmax = rocks[j].getZ()+1.3f;
              //finding mins
-             cxmin = rocks[j].getX()-1.0f;
-             cymin = rocks[j].getY()-1.0f;
-             czmin = rocks[j].getZ()-1.0f;
+             cxmin = rocks[j].getX()-3.0f;
+             cymin = rocks[j].getY()-1.3f;
+             czmin = rocks[j].getZ()-1.3f;
              if(
-             (cxmin<f_x<cxmax)
+             ((cxmin < f_x) && (f_x < cxmax))
+             &&  
+             ((cymin < f_y) && (f_y < cymax))
              && 
-             (cymin<f_y<cymax) 
-             && 
-             (czmin<f_z<czmax)){
-             quitting=1;
-             }
-     }
+             ((czmin < f_z) && (f_z < czmax))){
+             quitting = 1;
+             } //end quitting
+             } //end isDestroyed check
+     } //end rock loop
 }
 void updateIntro(){
      introRotation += 0.5f;
