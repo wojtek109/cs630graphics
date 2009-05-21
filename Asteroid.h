@@ -1,6 +1,15 @@
+
 #ifndef ASTEROID_H
 #define ASTEROID_H
-
+/*
+* Asteroid Class
+* float x,y,z = coordinates
+* float rotation = angle of current rotation
+* float speed = speed of rock
+* bool destroyed
+* class includes getters and setters for x,y,z,rotation
+* getter for speed and a reset() to regenerate all values
+*/
 class Asteroid{
   public:
     Asteroid(void);
@@ -33,14 +42,10 @@ class Asteroid{
 
 Asteroid::Asteroid()
 {
-     x = (rand()%10)-5;
-     y = (rand()%10)-5;
-     z = -50.0f - rand()%50; 
-
+    x = (rand()%10)-5;
+    y = (rand()%10)-5;
+    z = -50.0f - rand()%50; 
 }
-
-
-
 Asteroid::Asteroid(float inX,float inY, float inZ)
 {
   x = inX;
@@ -50,12 +55,11 @@ Asteroid::Asteroid(float inX,float inY, float inZ)
 
 Asteroid::~Asteroid()
 {
-
 }
 
 void Asteroid::setX(float inX)
 {
-  this->x = inX;
+ this->x = inX;
 }
 
 float Asteroid::getX(void)
@@ -82,6 +86,7 @@ float Asteroid::getZ(void)
 {
   return z;
 }
+
 void Asteroid::setRotation(float newRotation)
 {
      this->rotation = newRotation;
@@ -89,26 +94,28 @@ void Asteroid::setRotation(float newRotation)
 
 float Asteroid::getRotation(void)
 {
-                       return rotation;                       
+    return rotation;                       
 }
+
 void Asteroid::reset(int mode){
      if(mode){
-     this->x = 0.0f;
-     this->y = 0.0f;
-     this->z = -50.0f - rand()%50; 
-     speed = 0.5;
-     rotation = rand();
-     destroyed = 0;
+         this->x = 0.0f;
+         this->y = 0.0f;
+         this->z = -50.0f - rand()%50; 
+         speed = 0.5;
+         rotation = rand();
+         destroyed = 0;
      }
      else{
-     this->x = fabs((rand()%10))-5;
-     this->y = fabs((rand()%10))-5;
-     this->z = -50.0f - rand()%50; 
-     speed = 0.5;
-     rotation = rand();
-     destroyed = 0;
-          }
+         this->x = fabs((rand()%10))-5;
+         this->y = fabs((rand()%10))-5;
+         this->z = -50.0f - rand()%50; 
+         speed = 0.5;
+         rotation = rand();
+         destroyed = 0;
+      }
 }
+
 void Asteroid::updateRotation(){
      this->rotation += 1;
      if(this->rotation > 360)
@@ -118,12 +125,15 @@ void Asteroid::updateRotation(){
 void Asteroid::updateZ(float change){
       this->z += change;
 }
+
 float Asteroid::getSpeed(){
       return this->speed;
-      }
+}
+
 int Asteroid::isDestroyed(){
     return destroyed;
 }
+
 void Asteroid::destroy(){
      destroyed = 1;
      }

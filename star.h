@@ -4,6 +4,15 @@
 #include <ctime>
 #include <cstdlib>
 
+/*
+* Star class
+* Based Asteroid off of this
+* pretty self-explanitory
+* x y z = coordinates
+* size = draw-size
+* setters & getters for x y z and size
+* reset to regenerate 
+*/
 class star{
 private:
       float x;
@@ -22,8 +31,6 @@ public:
       float getz(void);
       float getSize(void );
       void reset(void);
-            
-      void operator=(star s);             
 };
       
 star::star(void){
@@ -35,18 +42,23 @@ star::star(void){
 void star::updatex(float upd){
      x += upd;
 }
+
 void star::updatey(float upd){
      y += upd;
 }
+
 void star::updatez(float upd){
      z += upd;
 }
+
 float star::getx(void){
      return x;
 }
+
 float star::gety(void){
      return y;
 }
+
 float star::getz(void){
      return z;
 }
@@ -56,13 +68,7 @@ void star::reset(){
      y = fabs((rand()%20))-10;
      z = -20.0f - fabs((rand()%50)); 
      size = fabs((rand()%2))+1; 
-
-     }
-void star::operator=(star s){
-     this->x = s.getx();
-     this->y = s.gety();
-     this->z = s.getz();
-     }
+}
 void star::setSize(float sNew){
      this->size = sNew;
 }
